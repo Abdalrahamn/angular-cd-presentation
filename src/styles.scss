@@ -1,0 +1,205 @@
+/* Global Styles for Angular Change Detection Presentation */
+
+// Import Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Scrollbar Styles
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.5);
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba(255, 215, 0, 0.7);
+  }
+}
+
+// Selection Styles
+::selection {
+  background: rgba(255, 215, 0, 0.3);
+  color: white;
+}
+
+::-moz-selection {
+  background: rgba(255, 215, 0, 0.3);
+  color: white;
+}
+
+// Focus Styles
+*:focus {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
+}
+
+// Button Reset
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+// Code Syntax Highlighting
+.language-typescript,
+.language-javascript {
+  .keyword {
+    color: #ff79c6 !important;
+  }
+
+  .string {
+    color: #f1fa8c !important;
+  }
+
+  .comment {
+    color: #6272a4 !important;
+    font-style: italic;
+  }
+
+  .function {
+    color: #50fa7b !important;
+  }
+
+  .variable {
+    color: #8be9fd !important;
+  }
+
+  .decorator {
+    color: #ffb86c !important;
+  }
+
+  .type {
+    color: #bd93f9 !important;
+  }
+
+  .number {
+    color: #bd93f9 !important;
+  }
+
+  .operator {
+    color: #ff79c6 !important;
+  }
+
+  .punctuation {
+    color: #f8f8f2 !important;
+  }
+}
+
+// Utility Classes
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.font-light {
+  font-weight: 300;
+}
+
+.opacity-90 {
+  opacity: 0.9;
+}
+
+.opacity-80 {
+  opacity: 0.8;
+}
+
+.opacity-70 {
+  opacity: 0.7;
+}
+
+// Animation Classes
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Responsive Typography
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+}

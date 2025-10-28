@@ -1,0 +1,26 @@
+<div class="code-section">
+  @if (codeExample().title) {
+  <h3 class="code-title">{{ codeExample().title }}</h3>
+  }
+
+  <div class="code-container">
+    <div class="code-header">
+      <span class="language-tag">{{ codeExample().language }}</span>
+      <button class="copy-btn" (click)="copyCode()" title="Copy code">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
+          />
+        </svg>
+      </button>
+    </div>
+    <pre><code class="language-{{codeExample().language}}" [innerHTML]="highlightedCode()"></code></pre>
+  </div>
+
+  @if (codeExample().explanation) {
+  <div class="code-explanation">
+    <div class="explanation-icon">💡</div>
+    <p>{{ codeExample().explanation }}</p>
+  </div>
+  }
+</div>

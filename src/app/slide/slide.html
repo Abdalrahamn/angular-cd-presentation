@@ -1,0 +1,197 @@
+<div class="slide-container" [class.visible]="isVisible()">
+  <div class="slide-content">
+    <!-- Slide Header -->
+    <header class="slide-header">
+      <h1 class="slide-title">{{ slideData().title }}</h1>
+      @if (slideData().subtitle) {
+      <h2 class="slide-subtitle">{{ slideData().subtitle }}</h2>
+      }
+    </header>
+
+    <!-- Problem-Solution Section -->
+    @if (slideData().problemSolution) {
+    <app-problem-solution [problemSolution]="slideData().problemSolution!"></app-problem-solution>
+    }
+
+    <!-- Slide Body -->
+    <main class="slide-body">
+      @for (content of slideData().content; track content.type + $index) {
+      <div class="content-section">
+        <!-- Text Content -->
+        @if (content.type === 'text') {
+        <p class="content-text" [innerHTML]="content.content"></p>
+        }
+
+        <!-- Bullet Points -->
+        @if (content.type === 'bullet') {
+        <div class="content-bullets">
+          <h3>{{ content.content }}</h3>
+          @if (content.subItems) {
+          <ul>
+            @for (item of content.subItems; track $index) {
+            <li>{{ item }}</li>
+            }
+          </ul>
+          }
+        </div>
+        }
+
+        <!-- Highlighted Content -->
+        @if (content.type === 'highlight') {
+        <div class="content-highlight">
+          <div class="highlight-icon">💡</div>
+          <p>{{ content.content }}</p>
+        </div>
+        }
+
+        <!-- Comparison Content -->
+        @if (content.type === 'comparison') {
+        <app-comparison [content]="content"></app-comparison>
+        }
+
+        <!-- Timeline Content -->
+        @if (content.type === 'timeline') {
+        <app-timeline [content]="content"></app-timeline>
+        }
+
+        <!-- Table Content -->
+        @if (content.type === 'table') {
+        <div class="content-table">
+          <h3>{{ content.content }}</h3>
+          @if (content.tableData) {
+          <table class="concept-table">
+            <thead>
+              <tr>
+                @for (header of content.tableData.headers; track $index) {
+                <th>{{ header }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of content.tableData.rows; track $index) {
+              <tr>
+                @for (cell of row; track $index) {
+                <td>{{ cell }}</td>
+                }
+              </tr>
+              }
+            </tbody>
+          </table>
+          }
+        </div>
+        }
+
+        <!-- Change Detection Diagram -->
+        @if (content.type === 'code-demo') { @switch (slideData().id) { @case ('default-strategy') {
+        <app-change-detection-diagram
+          diagramType="component-tree"
+          [title]="content.content"
+          [animated]="true"
+        >
+        </app-change-detection-diagram>
+        } @case ('angular4-onpush') {
+        <app-change-detection-diagram
+          diagramType="onpush-tree"
+          [title]="content.content"
+          [animated]="true"
+        >
+        </app-change-detection-diagram>
+        } @case ('zone-js-deep-dive') {
+        <app-change-detection-diagram
+          diagramType="zone-flow"
+          [title]="content.content"
+          [animated]="true"
+        >
+        </app-change-detection-diagram>
+        } @case ('signals-stable') {
+        <app-change-detection-diagram
+          diagramType="signals-flow"
+          [title]="content.content"
+          [animated]="true"
+        >
+        </app-change-detection-diagram>
+        } @case ('signals-vs-zone') {
+        <app-change-detection-diagram
+          diagramType="strategy-comparison"
+          [title]="content.content"
+          [animated]="false"
+        >
+        </app-change-detection-diagram>
+        } @case ('performance-comparison') {
+        <app-change-detection-diagram
+          diagramType="performance-comparison"
+          [title]="content.content"
+          [animated]="true"
+        >
+        </app-change-detection-diagram>
+        } @default {
+        <div class="generic-diagram">
+          <h3>{{ content.content }}</h3>
+          <p>Interactive diagram would be displayed here</p>
+        </div>
+        } } }
+      </div>
+      }
+    </main>
+
+    <!-- Code Example Section -->
+    @if (hasCodeExample()) {
+    <app-vs-code-block [codeExample]="slideData().codeExample!"></app-vs-code-block>
+    }
+
+    <!-- Live Demo Section -->
+    @if (hasLiveDemo()) {
+    <section class="live-demo-section">
+      <div class="demo-header">
+        <h3>🔴 LIVE DEMO</h3>
+        <p>Interactive example of the concepts above</p>
+      </div>
+      <div class="demo-content">
+        @switch (getLiveDemoType()) { @case ('synchronous') {
+        <app-synchronous-demo></app-synchronous-demo>
+        } @case ('asynchronous') {
+        <app-asynchronous-demo></app-asynchronous-demo>
+        } @case ('signals') {
+        <app-signals-demo></app-signals-demo>
+        } @case ('onpush') {
+        <app-onpush-demo></app-onpush-demo>
+        } @case ('zoneless') {
+        <app-zoneless-demo></app-zoneless-demo>
+        } @case ('angularjs') {
+        <app-angularjs-demo></app-angularjs-demo>
+        } @case ('zone-flow') {
+        <app-zone-flow-demo></app-zone-flow-demo>
+        } @case ('zone-before-after') {
+        <app-zone-before-after-demo></app-zone-before-after-demo>
+        } @case ('async-pipe') {
+        <app-async-pipe-demo></app-async-pipe-demo>
+        } @case ('performance') {
+        <app-performance-demo></app-performance-demo>
+        } @default {
+        <div class="demo-placeholder">
+          <p>Live demo coming soon for this topic!</p>
+        </div>
+        } }
+      </div>
+    </section>
+    }
+
+    <!-- Diagram Section -->
+    @if (slideData().diagram) {
+    <app-change-detection-diagram
+      [diagramType]="slideData().diagram!.type"
+      [title]="slideData().diagram!.title || ''"
+      [animated]="slideData().diagram!.animated || false"
+    >
+    </app-change-detection-diagram>
+    }
+
+    <!-- Slide Notes -->
+    @if (slideData().notes) {
+    <footer class="slide-notes">
+      <div class="notes-icon">📝</div>
+      <p>{{ slideData().notes }}</p>
+    </footer>
+    }
+  </div>
+</div>

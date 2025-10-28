@@ -1,0 +1,53 @@
+<div class="problem-solution-container">
+  <div class="section-grid">
+    <!-- Problem Section -->
+    <div class="problem-section">
+      <div class="section-header">
+        <div class="section-icon problem-icon">⚠️</div>
+        <h3>The Problem</h3>
+      </div>
+      <div class="section-content">
+        <p>{{ problemSolution().problem }}</p>
+      </div>
+    </div>
+
+    <!-- Solution Section -->
+    <div class="solution-section">
+      <div class="section-header">
+        <div class="section-icon solution-icon">💡</div>
+        <h3>The Solution</h3>
+      </div>
+      <div class="section-content">
+        <p>{{ problemSolution().solution }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Benefits Section -->
+  <div class="benefits-section">
+    <div class="benefits-header">
+      <div class="section-icon benefits-icon">🎯</div>
+      <h3>Key Benefits</h3>
+    </div>
+    <div class="benefits-grid">
+      @for (benefit of problemSolution().benefits; track $index) {
+      <div class="benefit-item" [style.animation-delay.ms]="$index * 150">
+        <div class="benefit-icon">✅</div>
+        <span>{{ benefit }}</span>
+      </div>
+      }
+    </div>
+  </div>
+
+  @if (problemSolution().implementation) {
+  <div class="implementation-section">
+    <div class="section-header">
+      <div class="section-icon implementation-icon">🔧</div>
+      <h3>Implementation</h3>
+    </div>
+    <div class="section-content">
+      <p>{{ problemSolution().implementation }}</p>
+    </div>
+  </div>
+  }
+</div>

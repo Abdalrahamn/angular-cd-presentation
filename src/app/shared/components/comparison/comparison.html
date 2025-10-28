@@ -1,0 +1,37 @@
+<div class="comparison-container">
+  <h3 class="comparison-title">{{ content().content }}</h3>
+
+  <div class="comparison-grid">
+    <div class="comparison-card before-card">
+      <div class="card-header">
+        <div class="card-icon">❌</div>
+        <h4>Before / Problem</h4>
+      </div>
+      <div class="card-content">
+        <p [innerHTML]="content().comparison?.before"></p>
+      </div>
+    </div>
+
+    <div class="comparison-arrow">
+      <svg width="48" height="24" viewBox="0 0 48 24" fill="none">
+        <path
+          d="M2 12H46M46 12L36 2M46 12L36 22"
+          stroke="#40e0d0"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+
+    <div class="comparison-card after-card">
+      <div class="card-header">
+        <div class="card-icon">✅</div>
+        <h4>After / Solution</h4>
+      </div>
+      <div class="card-content">
+        <p [innerHTML]="content().comparison?.after"></p>
+      </div>
+    </div>
+  </div>
+</div>

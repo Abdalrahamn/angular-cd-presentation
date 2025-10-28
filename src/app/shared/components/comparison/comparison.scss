@@ -1,0 +1,130 @@
+.comparison-container {
+  margin: 2rem 0;
+
+  .comparison-title {
+    font-size: 1.75rem;
+    margin: 0 0 2rem 0;
+    text-align: center;
+    color: #40e0d0;
+    font-weight: 600;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: center;
+
+    .comparison-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .card-header {
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-weight: 600;
+
+        .card-icon {
+          font-size: 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        h4 {
+          margin: 0;
+          font-size: 1.2rem;
+        }
+      }
+
+      .card-content {
+        padding: 0 1.5rem 1.5rem;
+
+        p {
+          margin: 0;
+          font-size: 1rem;
+          line-height: 1.6;
+          opacity: 0.9;
+        }
+      }
+
+      &.before-card {
+        border: 2px solid rgba(255, 107, 157, 0.3);
+
+        .card-header {
+          background: rgba(255, 107, 157, 0.1);
+          color: #ff6b9d;
+
+          .card-icon {
+            background: rgba(255, 107, 157, 0.2);
+          }
+        }
+      }
+
+      &.after-card {
+        border: 2px solid rgba(6, 255, 165, 0.3);
+
+        .card-header {
+          background: rgba(6, 255, 165, 0.1);
+          color: #06ffa5;
+
+          .card-icon {
+            background: rgba(6, 255, 165, 0.2);
+          }
+        }
+      }
+    }
+
+    .comparison-arrow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      svg {
+        filter: drop-shadow(0 0 10px rgba(64, 224, 208, 0.5));
+        animation: pulse-arrow 2s infinite;
+      }
+    }
+  }
+}
+
+@keyframes pulse-arrow {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .comparison-container {
+    .comparison-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+
+      .comparison-arrow {
+        transform: rotate(90deg);
+      }
+    }
+  }
+}

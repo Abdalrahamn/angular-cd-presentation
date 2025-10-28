@@ -1,0 +1,111 @@
+<div class="presentation-container">
+  <!-- Presentation Header -->
+  <header class="presentation-header">
+    <h1 class="presentation-title">{{ presentation.title }}</h1>
+    <div class="slide-counter">{{ slideNumber() }}</div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar" [style.width.%]="progressPercentage()"></div>
+  </div>
+
+  <!-- Main Slide Area -->
+  <main class="slide-area">
+    <app-slide #currentSlideRef [slideData]="currentSlide()" class="current-slide"> </app-slide>
+  </main>
+
+  <!-- Navigation Controls -->
+  <nav class="navigation-controls">
+    <div class="nav-buttons">
+      <button
+        class="nav-btn prev-btn"
+        [disabled]="!canGoPrevious()"
+        (click)="previousSlide()"
+        title="Previous slide (Left Arrow)"
+      >
+        ← Previous
+      </button>
+
+      @if (!isPlaying()) {
+      <button class="nav-btn play-btn" (click)="startAutoPlay()" title="Start auto-play">
+        ▶ Play
+      </button>
+      } @if (isPlaying()) {
+      <button class="nav-btn pause-btn" (click)="pauseAutoPlay()" title="Pause auto-play">
+        ⏸ Pause
+      </button>
+      }
+
+      <button
+        class="nav-btn reset-btn"
+        (click)="resetPresentation()"
+        title="Reset to first slide (R)"
+      >
+        ⟲ Reset
+      </button>
+
+      <button
+        class="nav-btn fullscreen-btn"
+        (click)="toggleFullscreen()"
+        title="Toggle fullscreen (Escape)"
+      >
+        ⛶ Fullscreen
+      </button>
+
+      <button
+        class="nav-btn next-btn"
+        [disabled]="!canGoNext()"
+        (click)="nextSlide()"
+        title="Next slide (Right Arrow or Space)"
+      >
+        Next →
+      </button>
+    </div>
+  </nav>
+
+  <!-- Slide Thumbnails -->
+  <aside class="slide-thumbnails">
+    <div class="thumbnails-container">
+      @for (slide of presentation.slides; track slide.id) {
+      <button
+        class="thumbnail-btn"
+        [class.active]="$index === currentSlideIndex()"
+        (click)="goToSlide($index)"
+        [title]="slide.title"
+      >
+        <span class="thumbnail-number">{{ $index + 1 }}</span>
+        <span class="thumbnail-title">{{ slide.title }}</span>
+      </button>
+      }
+    </div>
+  </aside>
+
+  <!-- Keyboard Shortcuts Help -->
+  <div class="keyboard-help">
+    <details>
+      <summary>⌨️ Keyboard Shortcuts</summary>
+      <div class="shortcuts-grid">
+        <div class="shortcut-group">
+          <h4>Navigation</h4>
+          <ul>
+            <li><kbd>→</kbd> or <kbd>Space</kbd> - Next slide</li>
+            <li><kbd>←</kbd> - Previous slide</li>
+            <li><kbd>Home</kbd> - First slide</li>
+            <li><kbd>End</kbd> - Last slide</li>
+            <li><kbd>Page Up</kbd> - Previous slide</li>
+            <li><kbd>Page Down</kbd> - Next slide</li>
+          </ul>
+        </div>
+        <div class="shortcut-group">
+          <h4>Controls</h4>
+          <ul>
+            <li><kbd>F</kbd> or <kbd>Esc</kbd> - Toggle fullscreen</li>
+            <li><kbd>P</kbd> - Toggle auto-play</li>
+            <li><kbd>R</kbd> - Reset to first slide</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+  </div>
+</div>

@@ -1,0 +1,177 @@
+.code-section {
+  margin: 2rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(64, 224, 208, 0.2);
+
+  .code-title {
+    font-size: 1.4rem;
+    margin: 0;
+    padding: 1rem 1.5rem;
+    color: #40e0d0;
+    background: rgba(64, 224, 208, 0.1);
+    font-weight: 600;
+    border-bottom: 1px solid rgba(64, 224, 208, 0.2);
+  }
+
+  .code-container {
+    position: relative;
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+      .language-tag {
+        font-size: 0.8rem;
+        color: #40e0d0;
+        background: rgba(64, 224, 208, 0.2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .copy-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background: rgba(64, 224, 208, 0.2);
+          border-color: #40e0d0;
+          color: #40e0d0;
+        }
+      }
+    }
+
+    pre {
+      margin: 0;
+      padding: 1.5rem;
+      overflow-x: auto;
+      background: #1e1e1e;
+
+      code {
+        font-family: 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #f8f8f2;
+        font-weight: 400;
+
+        // Enhanced syntax highlighting
+        .keyword {
+          color: #ff79c6;
+          font-weight: 500;
+        }
+        .string {
+          color: #f1fa8c;
+        }
+        .comment {
+          color: #6272a4;
+          font-style: italic;
+          opacity: 0.8;
+        }
+        .function {
+          color: #50fa7b;
+          font-weight: 500;
+        }
+        .variable {
+          color: #8be9fd;
+        }
+        .decorator {
+          color: #ffb86c;
+          font-weight: 500;
+        }
+        .type {
+          color: #bd93f9;
+        }
+        .number {
+          color: #bd93f9;
+        }
+        .operator {
+          color: #ff79c6;
+        }
+        .punctuation {
+          color: #f8f8f2;
+        }
+        .class-name {
+          color: #50fa7b;
+          font-weight: 500;
+        }
+        .property {
+          color: #8be9fd;
+        }
+      }
+    }
+  }
+
+  .code-explanation {
+    padding: 1.5rem;
+    background: rgba(64, 224, 208, 0.05);
+    border-top: 1px solid rgba(64, 224, 208, 0.2);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+
+    .explanation-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 0.2rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      font-style: italic;
+    }
+  }
+}
+
+// Scrollbar for code
+pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb {
+  background: rgba(64, 224, 208, 0.4);
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba(64, 224, 208, 0.6);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .code-section {
+    .code-container pre code {
+      font-size: 0.8rem;
+    }
+
+    .code-explanation {
+      padding: 1rem;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+}

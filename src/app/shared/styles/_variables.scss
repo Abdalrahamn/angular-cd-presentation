@@ -1,0 +1,76 @@
+// Color Variables
+$primary-color: #40e0d0;
+$secondary-color: #48cae4;
+$tertiary-color: #00b4d8;
+$accent-color: #ffd93d;
+$success-color: #06ffa5;
+$warning-color: #ffb86c;
+$error-color: #ff6b9d;
+$info-color: #bd93f9;
+
+// Background Colors
+$dark-bg-primary: #0f0f23;
+$dark-bg-secondary: #1a1a2e;
+$dark-bg-tertiary: #16213e;
+$dark-bg-quaternary: #1e3c72;
+
+// Gradients
+$primary-gradient: linear-gradient(45deg, $primary-color, $secondary-color, $tertiary-color);
+$title-gradient: linear-gradient(45deg, $primary-color, $secondary-color, $tertiary-color);
+$slide-background: linear-gradient(
+  135deg,
+  $dark-bg-secondary 0%,
+  $dark-bg-tertiary 50%,
+  #0f3460 100%
+);
+$main-background: linear-gradient(
+  135deg,
+  $dark-bg-primary 0%,
+  $dark-bg-secondary 50%,
+  $dark-bg-tertiary 100%
+);
+
+// Shadows
+$slide-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+$card-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+$button-shadow: 0 8px 25px rgba($primary-color, 0.4);
+
+// Typography
+$font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-mono: 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+
+// Border Radius
+$border-radius-sm: 8px;
+$border-radius-md: 12px;
+$border-radius-lg: 15px;
+$border-radius-xl: 20px;
+$border-radius-2xl: 25px;
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Breakpoints
+$breakpoint-sm: 480px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1200px;
+$breakpoint-2xl: 1400px;
+
+// Z-index layers
+$z-index-dropdown: 100;
+$z-index-sticky: 200;
+$z-index-fixed: 300;
+$z-index-modal-backdrop: 400;
+$z-index-modal: 500;
+$z-index-popover: 600;
+$z-index-tooltip: 700;
