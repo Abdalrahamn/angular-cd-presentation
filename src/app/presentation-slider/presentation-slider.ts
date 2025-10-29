@@ -267,6 +267,19 @@ export class PresentationSlider implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private scrollActiveThumbnailIntoView() {
+    // Scroll the active thumbnail into view in the sidebar
+    setTimeout(() => {
+      const activeThumbnail = document.querySelector('.thumbnail-btn.active');
+      if (activeThumbnail) {
+        activeThumbnail.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }
+    }, 100);
+  }
+
   nextSlide() {
     if (this.canGoNext()) {
       this.currentSlideRef()?.hide();
@@ -278,6 +291,7 @@ export class PresentationSlider implements OnInit, AfterViewInit, OnDestroy {
         // Scroll to top after slide content is updated
         setTimeout(() => {
           this.scrollToTop();
+          this.scrollActiveThumbnailIntoView();
         }, 200);
       }, 300);
     }
@@ -294,6 +308,7 @@ export class PresentationSlider implements OnInit, AfterViewInit, OnDestroy {
         // Scroll to top after slide content is updated
         setTimeout(() => {
           this.scrollToTop();
+          this.scrollActiveThumbnailIntoView();
         }, 200);
       }, 300);
     }
@@ -309,6 +324,7 @@ export class PresentationSlider implements OnInit, AfterViewInit, OnDestroy {
         // Scroll to top after slide content is updated
         setTimeout(() => {
           this.scrollToTop();
+          this.scrollActiveThumbnailIntoView();
         }, 200);
       }, 300);
     }

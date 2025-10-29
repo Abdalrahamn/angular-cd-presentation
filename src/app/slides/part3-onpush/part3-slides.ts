@@ -173,156 +173,59 @@ export class ComparisonComponent {
     ],
     codeExample: {
       language: 'typescript',
-      title: 'OnPush Triggers Detailed Examples',
+      title: 'OnPush Triggers: The Four Conditions',
       code: `@Component({
   selector: 'app-onpush-triggers',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: \`
     <div>
       <h3>{{ user.name }}</h3>
-      <p>Posts: {{ user.posts.length }}</p>
       <p>Last update: {{ lastUpdate$ | async | date:'medium' }}</p>
-      
       <button (click)="handleClick()">Click Me</button>
-      <child-component (childEvent)="handleChildEvent($event)"></child-component>
     </div>
   \`
 })
 export class OnPushTriggersComponent {
-  @Input() user!: User;
-  
-  // Observable for async pipe trigger
-  lastUpdate$ = new BehaviorSubject(new Date());
+  @Input() user!: User; // Trigger 1: Input reference change
+  lastUpdate$ = new BehaviorSubject(new Date()); // Trigger 3: Async pipe
   
   constructor(private cdr: ChangeDetectorRef) {}
   
   // Trigger 2: Event handler execution
   handleClick() {
     console.log('Button clicked - change detection will run');
-    // This event handler execution triggers change detection
-  }
-  
-  // Trigger 2: Child event handler
-  handleChildEvent(data: any) {
-    console.log('Child event received - change detection will run');
-    // Events from child components also trigger change detection
   }
   
   // Trigger 4: Manual change detection
   updateDataManually() {
-    // Some external data update that OnPush won't detect
-    this.updateExternalData();
-    
-    // Manually mark for check
     this.cdr.markForCheck();
-    console.log('Manually marked for check - change detection will run');
-  }
-  
-  // Trigger 3: Async pipe with new Observable value
-  updateLastUpdate() {
-    this.lastUpdate$.next(new Date());
-    // Async pipe will automatically trigger change detection
-  }
-  
-  private updateExternalData() {
-    // External API call or data update
+    console.log('Manually marked for check');
   }
 }
 
-// Parent component demonstrating input triggers
+// Parent: Input reference changes
 @Component({
   template: \`
     <app-onpush-triggers [user]="currentUser"></app-onpush-triggers>
-    
-    <div>
-      <button (click)="mutateUser()">❌ Mutate User (Won't Work)</button>
-      <button (click)="updateUserImmutable()">✅ Update User (Will Work)</button>
-      <button (click)="addPost()">Add Post</button>
-    </div>
+    <button (click)="mutateUser()">❌ Mutate (Won't Work)</button>
+    <button (click)="updateUserImmutable()">✅ New Reference (Works)</button>
   \`
 })
 export class ParentComponent {
-  currentUser: User = {
-    name: 'John',
-    email: 'john@example.com',
-    posts: []
-  };
+  currentUser: User = { name: 'John', email: 'john@example.com' };
   
-  // ❌ Trigger 1: This WON'T work with OnPush
+  // ❌ Mutation - same reference
   mutateUser() {
-    this.currentUser.name = 'Jane'; // Same object reference!
-    console.log('User mutated - OnPush component WON\'T update');
-    // OnPush component won't detect this change
+    this.currentUser.name = 'Jane'; // OnPush won't detect
   }
   
-  // ✅ Trigger 1: This WILL work with OnPush
+  // ✅ New reference - OnPush detects
   updateUserImmutable() {
-    this.currentUser = {
-      ...this.currentUser,
-      name: 'Jane'
-    }; // New object reference!
-    console.log('User updated immutably - OnPush component WILL update');
-  }
-  
-  // ✅ Trigger 1: Array updates with new reference
-  addPost() {
-    this.currentUser = {
-      ...this.currentUser,
-      posts: [...this.currentUser.posts, { id: Date.now(), title: 'New Post' }]
-    };
-    console.log('Post added immutably - OnPush component WILL update');
-  }
-}
-
-// Advanced: Conditional OnPush triggers
-@Component({
-  selector: 'app-conditional-onpush',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: \`
-    <div>
-      <h3>Conditional Updates</h3>
-      <p>Count: {{ count }}</p>
-      <p>Should update: {{ shouldUpdate }}</p>
-    </div>
-  \`
-})
-export class ConditionalOnPushComponent implements OnChanges {
-  @Input() data: any;
-  
-  count = 0;
-  shouldUpdate = false;
-  
-  constructor(private cdr: ChangeDetectorRef) {}
-  
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['data']) {
-      // Custom logic to determine if update is needed
-      const oldValue = changes['data'].previousValue;
-      const newValue = changes['data'].currentValue;
-      
-      this.shouldUpdate = this.hasSignificantChange(oldValue, newValue);
-      
-      if (this.shouldUpdate) {
-        this.count++;
-        console.log('Significant change detected, updating component');
-      } else {
-        // Even though input changed, we decide not to update
-        console.log('Change not significant, skipping update');
-        // Could call cdr.detach() to prevent this cycle
-      }
-    }
-  }
-  
-  private hasSignificantChange(oldValue: any, newValue: any): boolean {
-    // Custom comparison logic
-    if (!oldValue || !newValue) return true;
-    
-    // Only update if certain properties changed
-    return oldValue.importantField !== newValue.importantField;
+    this.currentUser = { ...this.currentUser, name: 'Jane' };
   }
 }`,
       explanation:
-        'OnPush components have four specific triggers. Understanding and properly implementing these triggers is essential for reliable OnPush behavior.',
+        'OnPush has four triggers: (1) Input reference change, (2) Event handlers, (3) Async pipe emissions, (4) Manual markForCheck(). Mutations are ignored!',
     },
     problemSolution: {
       problem:
@@ -340,684 +243,83 @@ export class ConditionalOnPushComponent implements OnChanges {
     },
   },
   {
-    id: 'immutability-deep-dive',
-    title: 'Immutability Patterns for OnPush',
-    subtitle: 'Mastering Reference-Based Change Detection',
-    content: [
-      {
-        type: 'text',
-        content:
-          'OnPush strategy requires immutable data patterns to work correctly. Understanding and implementing these patterns is crucial for OnPush success.',
-      },
-      {
-        type: 'comparison',
-        content: 'Mutable vs Immutable Patterns:',
-        comparison: {
-          before: "Mutable: Modifies existing objects, same reference, OnPush won't detect changes",
-          after: 'Immutable: Creates new objects, new reference, OnPush detects changes reliably',
-        },
-      },
-      {
-        type: 'bullet',
-        content: 'Benefits of immutable patterns:',
-        subItems: [
-          'Guaranteed OnPush compatibility',
-          'Predictable change detection behavior',
-          'Time-travel debugging capabilities',
-          'Better performance with proper memoization',
-          'Easier testing and reasoning about state',
-          'Integration with state management libraries',
-        ],
-      },
-    ],
-    codeExample: {
-      language: 'typescript',
-      title: 'Comprehensive Immutability Patterns',
-      code: `interface User {
-  id: number;
-  name: string;
-  email: string;
-  profile: {
-    avatar: string;
-    preferences: {
-      theme: string;
-      notifications: boolean;
-    };
-  };
-  posts: Post[];
-  tags: string[];
-}
-
-@Component({
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class ImmutabilityPatternsComponent {
-  users: User[] = [];
-  
-  // ❌ MUTABLE PATTERNS - DON'T DO THIS WITH ONPUSH
-  
-  updateUserMutable(userId: number, newName: string) {
-    const user = this.users.find(u => u.id === userId);
-    if (user) {
-      user.name = newName; // ❌ Mutating existing object
-      user.profile.preferences.theme = 'dark'; // ❌ Nested mutation
-    }
-    // OnPush components won't detect these changes!
-  }
-  
-  addUserMutable(newUser: User) {
-    this.users.push(newUser); // ❌ Mutating existing array
-    // OnPush components won't detect this change!
-  }
-  
-  // ✅ IMMUTABLE PATTERNS - CORRECT FOR ONPUSH
-  
-  // Object updates with spread operator
-  updateUserImmutable(userId: number, newName: string) {
-    this.users = this.users.map(user =>
-      user.id === userId
-        ? { ...user, name: newName } // ✅ New object reference
-        : user
-    );
-  }
-  
-  // Nested object updates
-  updateUserTheme(userId: number, theme: string) {
-    this.users = this.users.map(user =>
-      user.id === userId
-        ? {
-            ...user,
-            profile: {
-              ...user.profile,
-              preferences: {
-                ...user.profile.preferences,
-                theme // ✅ Immutable nested update
-              }
-            }
-          }
-        : user
-    );
-  }
-  
-  // Array operations
-  addUserImmutable(newUser: User) {
-    this.users = [...this.users, newUser]; // ✅ New array reference
-  }
-  
-  removeUser(userId: number) {
-    this.users = this.users.filter(user => user.id !== userId); // ✅ New array
-  }
-  
-  updateUserAtIndex(index: number, updates: Partial<User>) {
-    this.users = [
-      ...this.users.slice(0, index),
-      { ...this.users[index], ...updates },
-      ...this.users.slice(index + 1)
-    ]; // ✅ New array with updated object
-  }
-  
-  // Array of objects updates
-  addPostToUser(userId: number, newPost: Post) {
-    this.users = this.users.map(user =>
-      user.id === userId
-        ? {
-            ...user,
-            posts: [...user.posts, newPost] // ✅ New posts array
-          }
-        : user
-    );
-  }
-  
-  updatePostInUser(userId: number, postId: number, updates: Partial<Post>) {
-    this.users = this.users.map(user =>
-      user.id === userId
-        ? {
-            ...user,
-            posts: user.posts.map(post =>
-              post.id === postId
-                ? { ...post, ...updates } // ✅ New post object
-                : post
-            )
-          }
-        : user
-    );
-  }
-  
-  // Complex state updates with helper functions
-  updateUserProfile(userId: number, profileUpdates: Partial<User['profile']>) {
-    this.users = this.updateUserById(userId, user => ({
-      ...user,
-      profile: { ...user.profile, ...profileUpdates }
-    }));
-  }
-  
-  // Helper function for cleaner updates
-  private updateUserById(userId: number, updateFn: (user: User) => User): User[] {
-    return this.users.map(user =>
-      user.id === userId ? updateFn(user) : user
-    );
-  }
-  
-  // Batch updates
-  batchUpdateUsers(updates: { userId: number; changes: Partial<User> }[]) {
-    this.users = this.users.map(user => {
-      const update = updates.find(u => u.userId === user.id);
-      return update ? { ...user, ...update.changes } : user;
-    });
-  }
-}
-
-// Using Immer for complex immutable updates
-import { produce } from 'immer';
-
-@Component({
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class ImmerPatternsComponent {
-  users: User[] = [];
-  
-  // ✅ Using Immer for complex updates
-  updateUserWithImmer(userId: number, updates: Partial<User>) {
-    this.users = produce(this.users, draft => {
-      const user = draft.find(u => u.id === userId);
-      if (user) {
-        // Immer allows "mutable" syntax but creates immutable result
-        Object.assign(user, updates);
-      }
-    });
-  }
-  
-  // Complex nested updates with Immer
-  updateNestedPreference(userId: number, key: string, value: any) {
-    this.users = produce(this.users, draft => {
-      const user = draft.find(u => u.id === userId);
-      if (user) {
-        user.profile.preferences[key] = value; // Looks mutable but isn't!
-      }
-    });
-  }
-  
-  // Array manipulations with Immer
-  reorderPosts(userId: number, fromIndex: number, toIndex: number) {
-    this.users = produce(this.users, draft => {
-      const user = draft.find(u => u.id === userId);
-      if (user) {
-        const [movedPost] = user.posts.splice(fromIndex, 1);
-        user.posts.splice(toIndex, 0, movedPost);
-      }
-    });
-  }
-}
-
-// Performance considerations
-@Component({
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class PerformantImmutableComponent {
-  largeDataSet: any[] = [];
-  
-  // ✅ Efficient updates for large datasets
-  updateItemEfficiently(id: number, updates: any) {
-    // Find index first to avoid multiple iterations
-    const index = this.largeDataSet.findIndex(item => item.id === id);
-    if (index !== -1) {
-      this.largeDataSet = [
-        ...this.largeDataSet.slice(0, index),
-        { ...this.largeDataSet[index], ...updates },
-        ...this.largeDataSet.slice(index + 1)
-      ];
-    }
-  }
-  
-  // ✅ Batch updates for better performance
-  batchUpdateItems(updates: Map<number, any>) {
-    this.largeDataSet = this.largeDataSet.map(item =>
-      updates.has(item.id)
-        ? { ...item, ...updates.get(item.id) }
-        : item
-    );
-  }
-  
-  // ✅ Memoized selectors for derived data
-  @memoize()
-  getFilteredItems(filter: string): any[] {
-    return this.largeDataSet.filter(item =>
-      item.name.toLowerCase().includes(filter.toLowerCase())
-    );
-  }
-}`,
-      explanation:
-        'Immutable patterns ensure OnPush components detect changes reliably. Use spread operators, array methods, or libraries like Immer for complex updates.',
-    },
-    problemSolution: {
-      problem:
-        "OnPush strategy requires reference changes to detect updates, but developers often use mutable operations that don't create new references.",
-      solution:
-        'Adopt comprehensive immutable data patterns that create new object references for every change, ensuring OnPush components detect all updates.',
-      benefits: [
-        'Guaranteed OnPush compatibility',
-        'Predictable change detection behavior',
-        'Better debugging and testing experience',
-        'Time-travel debugging capabilities',
-        'Performance benefits with memoization',
-      ],
-      implementation:
-        'Use spread operators, Object.assign, Array methods like map/filter, or libraries like Immer for complex immutable updates.',
-    },
-  },
-  {
     id: 'onpush-with-observables',
-    title: 'OnPush with Observables and Async Pipe',
-    subtitle: 'Reactive Programming with OnPush Strategy',
+    title: 'OnPush + Async Pipe: Perfect Match',
+    subtitle: 'Reactive Programming Made Simple',
     content: [
       {
         type: 'text',
         content:
-          'The async pipe is perfectly designed for OnPush components. It automatically handles subscriptions and triggers change detection when new values arrive.',
+          'The async pipe is the ideal solution for OnPush components, automatically handling subscriptions and change detection.',
       },
       {
         type: 'bullet',
-        content: 'Async pipe benefits with OnPush:',
+        content: 'Why async pipe + OnPush works perfectly:',
         subItems: [
-          'Automatically triggers change detection on new values',
-          'Handles subscription management (subscribe/unsubscribe)',
-          'Works seamlessly with OnPush strategy',
-          'Prevents memory leaks',
-          'Supports both Observables and Promises',
-          'Handles null/undefined values gracefully',
+          'Automatic change detection triggering',
+          'No manual subscription management needed',
+          'Prevents memory leaks automatically',
+          'Clean, declarative template syntax',
+          'Works with Observables and Promises',
         ],
       },
       {
         type: 'highlight',
         content:
-          'The async pipe is the recommended pattern for consuming Observables in OnPush components, eliminating the need for manual subscription management.',
+          '✨ Best Practice: Always use async pipe with OnPush components for reactive data!',
+      },
+      {
+        type: 'code-demo',
+        content: '🎯 Interactive Demo: Experience async pipe + OnPush in action',
       },
     ],
-    codeExample: {
-      language: 'typescript',
-      title: 'OnPush with Reactive Patterns',
-      code: `@Component({
-  selector: 'app-reactive-onpush',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: \`
-    <div class="reactive-component">
-      <!-- ✅ Async pipe automatically triggers OnPush -->
-      <div *ngIf="loading$ | async" class="loading">Loading...</div>
-      
-      <div *ngFor="let user of users$ | async; trackBy: trackByUserId">
-        <h3>{{ user.name }}</h3>
-        <p>{{ user.email }}</p>
-      </div>
-      
-      <!-- ✅ Multiple async pipes work perfectly -->
-      <div class="stats">
-        <p>Total: {{ (users$ | async)?.length || 0 }}</p>
-        <p>Online: {{ onlineCount$ | async }}</p>
-        <p>Last Update: {{ lastUpdate$ | async | date:'medium' }}</p>
-      </div>
-      
-      <!-- ✅ Error handling with async pipe -->
-      <div *ngIf="error$ | async as error" class="error">
-        Error: {{ error.message }}
-      </div>
-      
-      <!-- ✅ Complex derived data -->
-      <div class="summary">
-        <h4>Department Summary</h4>
-        <div *ngFor="let dept of departmentSummary$ | async">
-          {{ dept.name }}: {{ dept.count }} users ({{ dept.percentage }}%)
-        </div>
-      </div>
-    </div>
-  \`
-})
-export class ReactiveOnPushComponent implements OnInit {
-  // Base observables
-  users$: Observable<User[]>;
-  loading$: Observable<boolean>;
-  error$: Observable<Error | null>;
-  
-  // Derived observables
-  onlineCount$: Observable<number>;
-  lastUpdate$: Observable<Date>;
-  departmentSummary$: Observable<DepartmentSummary[]>;
-  
-  constructor(private userService: UserService) {}
-  
-  ngOnInit() {
-    // ✅ Create reactive data streams
-    this.users$ = this.userService.getUsers().pipe(
-      shareReplay(1), // Cache latest value
-      catchError(error => {
-        console.error('Error loading users:', error);
-        return of([]); // Fallback to empty array
-      })
-    );
-    
-    this.loading$ = this.userService.loading$;
-    this.error$ = this.userService.error$;
-    
-    // ✅ Derived observables - automatically update when source changes
-    this.onlineCount$ = this.users$.pipe(
-      map(users => users.filter(user => user.isOnline).length)
-    );
-    
-    this.lastUpdate$ = this.users$.pipe(
-      map(() => new Date()),
-      startWith(new Date())
-    );
-    
-    // ✅ Complex transformations
-    this.departmentSummary$ = this.users$.pipe(
-      map(users => this.calculateDepartmentSummary(users))
-    );
-  }
-  
-  // ✅ TrackBy function for performance
-  trackByUserId(index: number, user: User): number {
-    return user.id;
-  }
-  
-  private calculateDepartmentSummary(users: User[]): DepartmentSummary[] {
-    const deptMap = new Map<string, number>();
-    users.forEach(user => {
-      const count = deptMap.get(user.department) || 0;
-      deptMap.set(user.department, count + 1);
-    });
-    
-    const total = users.length;
-    return Array.from(deptMap.entries()).map(([name, count]) => ({
-      name,
-      count,
-      percentage: Math.round((count / total) * 100)
-    }));
-  }
-}
-
-// ❌ Anti-pattern: Manual subscription in OnPush
-@Component({
-  selector: 'app-manual-subscription',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: \`
-    <div>
-      <p>Users: {{ users.length }}</p>
-      <p>Loading: {{ isLoading }}</p>
-    </div>
-  \`
-})
-export class ManualSubscriptionComponent implements OnInit, OnDestroy {
-  users: User[] = [];
-  isLoading = false;
-  private subscription = new Subscription();
-  
-  constructor(
-    private userService: UserService,
-    private cdr: ChangeDetectorRef // ❌ Need manual change detection
-  ) {}
-  
-  ngOnInit() {
-    // ❌ Manual subscription management required
-    this.subscription.add(
-      this.userService.getUsers().subscribe(users => {
-        this.users = users;
-        this.cdr.markForCheck(); // ❌ Manual trigger needed
-      })
-    );
-    
-    this.subscription.add(
-      this.userService.loading$.subscribe(loading => {
-        this.isLoading = loading;
-        this.cdr.markForCheck(); // ❌ Manual trigger needed
-      })
-    );
-  }
-  
-  ngOnDestroy() {
-    this.subscription.unsubscribe(); // ❌ Manual cleanup required
-  }
-}
-
-// ✅ Advanced reactive patterns with OnPush
-@Component({
-  selector: 'app-advanced-reactive',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: \`
-    <div>
-      <!-- Search input -->
-      <input #searchInput (input)="onSearchInput(searchInput.value)" placeholder="Search users...">
-      
-      <!-- Filtered results -->
-      <div *ngFor="let user of filteredUsers$ | async">
-        {{ user.name }} - {{ user.department }}
-      </div>
-      
-      <!-- Pagination -->
-      <div class="pagination">
-        <button (click)="previousPage()" [disabled]="(currentPage$ | async) === 1">Previous</button>
-        <span>Page {{ currentPage$ | async }} of {{ totalPages$ | async }}</span>
-        <button (click)="nextPage()" [disabled]="(currentPage$ | async) === (totalPages$ | async)">Next</button>
-      </div>
-    </div>
-  \`
-})
-export class AdvancedReactiveComponent implements OnInit {
-  private searchSubject = new BehaviorSubject<string>('');
-  private pageSubject = new BehaviorSubject<number>(1);
-  private pageSize = 10;
-  
-  // Reactive streams
-  search$ = this.searchSubject.asObservable();
-  currentPage$ = this.pageSubject.asObservable();
-  
-  allUsers$: Observable<User[]>;
-  filteredUsers$: Observable<User[]>;
-  totalPages$: Observable<number>;
-  
-  constructor(private userService: UserService) {}
-  
-  ngOnInit() {
-    this.allUsers$ = this.userService.getUsers();
-    
-    // ✅ Reactive search with debouncing
-    const searchResults$ = combineLatest([
-      this.allUsers$,
-      this.search$.pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-    ]).pipe(
-      map(([users, searchTerm]) =>
-        searchTerm
-          ? users.filter(user =>
-              user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              user.department.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-          : users
-      )
-    );
-    
-    // ✅ Reactive pagination
-    this.filteredUsers$ = combineLatest([
-      searchResults$,
-      this.currentPage$
-    ]).pipe(
-      map(([users, page]) => {
-        const startIndex = (page - 1) * this.pageSize;
-        return users.slice(startIndex, startIndex + this.pageSize);
-      })
-    );
-    
-    this.totalPages$ = searchResults$.pipe(
-      map(users => Math.ceil(users.length / this.pageSize))
-    );
-    
-    // ✅ Reset to first page when search changes
-    this.search$.pipe(
-      skip(1), // Skip initial value
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.pageSubject.next(1);
-    });
-  }
-  
-  onSearchInput(value: string) {
-    this.searchSubject.next(value);
-  }
-  
-  nextPage() {
-    this.pageSubject.next(this.pageSubject.value + 1);
-  }
-  
-  previousPage() {
-    this.pageSubject.next(Math.max(1, this.pageSubject.value - 1));
-  }
-}
-
-// Service supporting reactive patterns
-@Injectable()
-export class ReactiveUserService {
-  private usersSubject = new BehaviorSubject<User[]>([]);
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-  private errorSubject = new BehaviorSubject<Error | null>(null);
-  
-  // Public observables
-  users$ = this.usersSubject.asObservable();
-  loading$ = this.loadingSubject.asObservable();
-  error$ = this.errorSubject.asObservable();
-  
-  constructor(private http: HttpClient) {}
-  
-  getUsers(): Observable<User[]> {
-    this.loadingSubject.next(true);
-    this.errorSubject.next(null);
-    
-    return this.http.get<User[]>('/api/users').pipe(
-      tap(users => {
-        this.usersSubject.next(users);
-        this.loadingSubject.next(false);
-      }),
-      catchError(error => {
-        this.errorSubject.next(error);
-        this.loadingSubject.next(false);
-        return throwError(error);
-      })
-    );
-  }
-  
-  updateUser(user: User): Observable<User> {
-    return this.http.put<User>(\`/api/users/\${user.id}\`, user).pipe(
-      tap(updatedUser => {
-        const currentUsers = this.usersSubject.value;
-        const updatedUsers = currentUsers.map(u =>
-          u.id === updatedUser.id ? updatedUser : u
-        );
-        this.usersSubject.next(updatedUsers);
-      })
-    );
-  }
-}`,
-      explanation:
-        'The async pipe is the perfect companion for OnPush components, automatically handling subscriptions and triggering change detection when observables emit new values.',
-    },
     problemSolution: {
       problem:
-        'Manual subscription management in OnPush components is complex, error-prone, and requires manual change detection triggering.',
+        'Manual subscriptions in OnPush components require complex change detection management.',
       solution:
-        'The async pipe provides automatic subscription management and change detection triggering, making reactive programming with OnPush seamless.',
+        'The async pipe eliminates complexity by automatically handling both subscriptions and change detection.',
       benefits: [
-        'Automatic subscription management',
-        'No memory leaks',
-        'Automatic change detection triggering',
-        'Cleaner, more declarative templates',
-        'Better performance with reactive patterns',
+        'Zero boilerplate subscription code',
+        'Automatic memory management',
+        'Seamless OnPush integration',
+        'Cleaner component architecture',
       ],
       implementation:
-        'Use async pipe in templates for all Observable consumption, structure services to return Observables, and leverage reactive operators for data transformation.',
+        'Replace manual subscriptions with async pipe in templates for all reactive data consumption.',
     },
   },
   {
     id: 'async-pipe-implementation',
-    title: 'Async Pipe Implementation',
-    subtitle: 'How Async Pipe Marks Components as Dirty',
+    title: 'How Async Pipe Triggers OnPush Change Detection',
+    subtitle: 'From Observable Emission to Component Update',
     content: [
       {
         type: 'text',
         content:
-          'The async pipe automatically calls ChangeDetectorRef.markForCheck() whenever the Observable emits a new value, ensuring OnPush components update correctly.',
+          'The async pipe automatically calls ChangeDetectorRef.markForCheck() whenever an Observable emits, ensuring OnPush components update correctly.',
       },
       {
         type: 'bullet',
-        content: 'Async pipe internal flow:',
+        content: 'Complete flow from emission to UI update:',
         subItems: [
-          '1. Async pipe subscribes to the Observable/Promise',
-          '2. When a new value is emitted',
-          '3. Pipe calls _updateLatestValue(async, value)',
+          '1. Observable emits new value (data$)',
+          '2. Async pipe receives the value',
+          '3. Pipe calls _updateLatestValue() internally',
           '4. Inside this method: this._ref.markForCheck()',
-          '5. This marks the component as dirty',
-          '6. NgZone triggers change detection',
-          '7. Component and children are checked',
+          '5. Component gets marked as dirty',
+          '6. NgZone triggers change detection cycle',
+          '7. Dirty components and their children refresh',
         ],
       },
       {
         type: 'highlight',
         content:
-          '💡 Key insight: The async pipe injects ChangeDetectorRef and calls markForCheck() automatically!',
+          '💡 Key insight: The async pipe bridges reactive programming and OnPush by automatically marking components dirty!',
       },
     ],
     codeExample: {
       language: 'typescript',
-      title: 'Async Pipe Internal Implementation',
-      code: `// Simplified AsyncPipe implementation from Angular source
-@Pipe()
-export class AsyncPipe implements OnDestroy, PipeTransform {
-  constructor(ref: ChangeDetectorRef) {}
-  
-  transform<T>(obj: Observable<T>): T|null {
-    // code removed for brevity
-  }
-  
-  private _updateLatestValue(async: any, value: Object): void {
-    // code removed for brevity
-    this._ref!.markForCheck(); // <-- marks component for check
-  }
-}
-
-// How Angular's markForCheck() works internally
-// From view_ref.ts
-markForCheck(): void {
-  markViewDirty(this._cdRefInjectingView || this._lView);
-}`,
-      explanation:
-        'The async pipe is a smart pipe that automatically handles change detection by calling markForCheck() whenever new data arrives, making it perfect for OnPush components.',
-    },
-  },
-  {
-    id: 'async-pipe-marking-demo',
-    title: 'data$ | async pipe marks component as dirty',
-    subtitle: 'Visualizing Async Pipe Change Detection',
-    content: [
-      {
-        type: 'text',
-        content:
-          'When you use the async pipe in an OnPush component, it automatically marks the component as dirty when the observable emits, triggering change detection for that component and its children.',
-      },
-      {
-        type: 'bullet',
-        content: 'What happens in the component tree:',
-        subItems: [
-          '1. Observable emits new value (data$)',
-          '2. Async pipe receives the value',
-          '3. Async pipe calls markForCheck()',
-          '4. Component gets marked as dirty',
-          '5. onMicrotaskEmpty event fires',
-          '6. NgZone triggers change detection',
-          '7. Dirty components and their children refresh',
-        ],
-      },
-    ],
-    codeExample: {
-      language: 'typescript',
-      title: 'Async Pipe with OnPush Component',
+      title: 'Simple Example: Async Pipe with OnPush',
       code: `@Component({
   selector: 'app-user-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -1034,14 +336,10 @@ export class UserListComponent {
   constructor(private userService: UserService) {}
 }
 
-// The flow:
-// 1. userService.getUsers() returns Observable<User[]>
-// 2. Async pipe subscribes: users$.subscribe(value => ...)
-// 3. When data arrives: async pipe calls this._ref.markForCheck()
-// 4. Component marked dirty → bindings refreshed
-// 5. DOM updated with new user list`,
+// What happens internally:
+// 1. users$ emits → 2. async pipe calls markForCheck() → 3. UI updates`,
       explanation:
-        'The async pipe bridges the gap between reactive programming and OnPush change detection, automatically marking components dirty when observables emit.',
+        'The async pipe automatically handles the complexity of OnPush change detection, making reactive programming seamless.',
     },
     diagram: {
       type: 'dirty-marking-flow',
@@ -1145,160 +443,6 @@ export class FixedComponent implements OnInit {
       type: 'onpush-tree',
       title: 'Broken State Component Tree',
       animated: false,
-    },
-  },
-  {
-    id: 'onpush-best-practices',
-    title: 'OnPush Best Practices and Common Pitfalls',
-    subtitle: 'Mastering OnPush for Production Applications',
-    content: [
-      {
-        type: 'text',
-        content:
-          'Successfully implementing OnPush requires understanding common pitfalls and following established best practices. Here are the key patterns for OnPush success.',
-      },
-      {
-        type: 'bullet',
-        content: 'OnPush best practices:',
-        subItems: [
-          'Always use immutable update patterns for inputs',
-          'Prefer async pipe over manual subscriptions',
-          'Use ChangeDetectorRef judiciously for edge cases',
-          'Implement proper trackBy functions for lists',
-          'Avoid function calls in templates',
-          'Test OnPush components thoroughly',
-        ],
-      },
-      {
-        type: 'comparison',
-        content: 'OnPush Trade-offs:',
-        comparison: {
-          before: 'Default: Simple to use but can be inefficient with large component trees',
-          after:
-            'OnPush: Better performance but requires disciplined coding patterns and immutability',
-        },
-      },
-    ],
-    codeExample: {
-      language: 'typescript',
-      title: 'OnPush Best Practices - Clean & Focused',
-      code: `// ✅ CLEAN OnPush Implementation
-@Component({
-  selector: 'app-user-profile',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: \`
-    <!-- ✅ Use async pipe for observables -->
-    <div *ngIf="loading$ | async">Loading...</div>
-    
-    <!-- ✅ Pre-computed values -->
-    <h2>{{ userDisplayName }}</h2>
-    <p>Member since: {{ memberSince }}</p>
-    
-    <!-- ✅ Event handlers work automatically -->
-    <button (click)="refresh()">Refresh</button>
-    
-    <!-- ✅ TrackBy for lists -->
-    <div *ngFor="let post of posts; trackBy: trackByPostId">
-      {{ post.title }}
-    </div>
-  \`
-})
-export class UserProfileComponent implements OnChanges {
-  @Input() user!: User;
-  @Input() posts!: Post[];
-  
-  // Pre-computed display values
-  userDisplayName = '';
-  memberSince = '';
-  
-  // Observable for async operations
-  loading$ = new BehaviorSubject<boolean>(false);
-  
-  constructor(private cdr: ChangeDetectorRef) {}
-  
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['user']) {
-      // ✅ Update computed values when inputs change
-      this.userDisplayName = \`\${this.user.firstName} \${this.user.lastName}\`;
-      this.memberSince = this.user.joinDate.toLocaleDateString();
-    }
-  }
-  
-  // ✅ TrackBy for performance
-  trackByPostId = (index: number, post: Post) => post.id;
-  
-  // ✅ Event handlers automatically trigger change detection
-  refresh() {
-    this.loading$.next(true);
-    // Refresh logic here
-    this.loading$.next(false);
-  }
-}
-
-// ❌ COMMON PITFALLS TO AVOID
-@Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: \`
-    <!-- ❌ Function calls in templates (called every check) -->
-    <p>{{ formatDate(user.joinDate) }}</p>
-    
-    <!-- ❌ Mutating objects (OnPush won't detect) -->
-    <button (click)="mutateUser()">Won't Work</button>
-    
-    <!-- ❌ Manual subscriptions without markForCheck -->
-    <p>{{ manualData }}</p>
-  \`
-})
-export class OnPushPitfallsComponent {
-  @Input() user!: User;
-  manualData = '';
-  
-  ngOnInit() {
-    // ❌ Manual subscription without change detection
-    this.service.getData().subscribe(data => {
-      this.manualData = data; // Won't update UI
-      // Missing: this.cdr.markForCheck();
-    });
-  }
-  
-  // ❌ This won't trigger OnPush
-  mutateUser() {
-    this.user.name = 'New Name'; // Mutation - OnPush ignores
-  }
-  
-  // ❌ Function called on every change detection
-  formatDate(date: Date): string {
-    return date.toLocaleDateString(); // Expensive operation repeated
-  }
-}
-
-// Angular OnPush Decision Flow
-if (component.changeDetection === OnPush) {
-  if (component.isDirty || hasInputChanges || hasEventListener) {
-    // ✅ Check bindings → Refresh bindings → Check children
-    checkComponent(component);
-  } else {
-    // ⏭️ Skip this component and its subtree
-    skipComponent(component);
-  }
-}`,
-      explanation:
-        'Following OnPush best practices ensures reliable, performant components. Avoid common pitfalls like function calls in templates and object mutations.',
-    },
-    problemSolution: {
-      problem:
-        "OnPush components can be tricky to implement correctly, with common pitfalls leading to components that don't update when expected or perform poorly.",
-      solution:
-        'Following established best practices and avoiding common pitfalls ensures OnPush components work reliably and provide the expected performance benefits.',
-      benefits: [
-        'Reliable component update behavior',
-        'Maximum performance benefits',
-        'Easier debugging and maintenance',
-        'Better integration with reactive patterns',
-        'Improved application scalability',
-      ],
-      implementation:
-        'Use immutable patterns, async pipe, proper trackBy functions, avoid template function calls, and test OnPush behavior thoroughly.',
     },
   },
 ];

@@ -3,6 +3,7 @@
   <h3 class="diagram-title">{{ title() }}</h3>
   }
 
+
   <!-- Component Tree Diagram -->
   @if (diagramType() === 'component-tree') {
   <div class="component-tree">
@@ -92,9 +93,9 @@
   @if (diagramType() === 'onpush-tree') {
   <div class="component-tree onpush-tree">
     <div class="tree-level">
-      <div class="component-node root-node" [class.active]="currentStep() >= 1">
+      <div class="component-node root-node" [class.active]="currentStep() >= 1" [class.checking]="isAnimating() && currentStep() >= 1">
         <div class="node-content">
-          <span class="node-name">App Component</span>
+          <span class="node-name">app-component</span>
           <span class="node-status">Default Strategy</span>
         </div>
       </div>
@@ -103,39 +104,318 @@
     <div class="connection-lines">
       <div class="line" [class.active]="currentStep() >= 2"></div>
       <div class="line" [class.active]="currentStep() >= 2"></div>
+    </div>
+
+    <div class="tree-level">
+      <div class="component-node" [class.active]="currentStep() >= 2" [class.checking]="isAnimating() && currentStep() >= 2">
+        <div class="node-content">
+          <span class="node-name">info-section</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 2" [class.checking]="isAnimating() && currentStep() >= 2">
+        <div class="node-content">
+          <span class="node-name">user-section</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connection-lines">
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+    </div>
+
+    <div class="tree-level">
+      <div class="component-node" [class.active]="currentStep() >= 3" [class.checking]="isAnimating() && currentStep() >= 3">
+        <div class="node-content">
+          <span class="node-name">info-sub-section1</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+      <div class="component-node onpush-node" [class.active]="currentStep() >= 3" [class.skipped]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">info-sub-section2 ⭐</span>
+          <span class="node-status">OnPush - Skipped</span>
+        </div>
+      </div>
+      <div class="component-node onpush-node" [class.active]="currentStep() >= 3" [class.checking]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">user-sub-section1 ⭐</span>
+          <span class="node-status">OnPush - Input Changed</span>
+        </div>
+      </div>
+      <div class="component-node onpush-node" [class.active]="currentStep() >= 3" [class.skipped]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">user-sub-section2 ⭐</span>
+          <span class="node-status">OnPush - Skipped</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connection-lines">
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+    </div>
+
+    <div class="tree-level">
+      <div class="component-node" [class.active]="currentStep() >= 4" [class.checking]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 4" [class.skipped]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Skipped (OnPush Parent)</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 4" [class.checking]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Checked (OnPush Parent)</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 4" [class.skipped]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Skipped (OnPush Parent)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend-panel">
+      <div class="legend-item">
+        <div class="legend-box default"></div>
+        <span>Default Strategy - Always Checked</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box onpush"></div>
+        <span>⭐ OnPush Strategy - Checked Selectively</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box skipped"></div>
+        <span>Skipped - No Input Changes</span>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Traditional Component Tree (All Checked) -->
+  @if (diagramType() === 'traditional-component-tree') {
+  <div class="component-tree traditional-tree">
+    <div class="tree-level">
+      <div class="component-node root-node" [class.active]="currentStep() >= 1" [class.checking]="isAnimating() && currentStep() >= 1">
+        <div class="node-content">
+          <span class="node-name">app-component</span>
+          <span class="node-status">Always Checked</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connection-lines">
+      <div class="line" [class.active]="currentStep() >= 2"></div>
       <div class="line" [class.active]="currentStep() >= 2"></div>
     </div>
 
     <div class="tree-level">
-      <div
-        class="component-node onpush-node"
-        [class.active]="currentStep() >= 2"
-        [class.skipped]="isAnimating() && currentStep() >= 3"
-      >
+      <div class="component-node" [class.active]="currentStep() >= 2" [class.checking]="isAnimating() && currentStep() >= 2">
         <div class="node-content">
-          <span class="node-name">Header (OnPush)</span>
-          <span class="node-status">Skipped - No Input Changes</span>
+          <span class="node-name">info-section</span>
+          <span class="node-status">Always Checked</span>
         </div>
       </div>
-      <div
-        class="component-node"
-        [class.active]="currentStep() >= 2"
-        [class.checking]="isAnimating() && currentStep() >= 2"
-      >
+      <div class="component-node" [class.active]="currentStep() >= 2" [class.checking]="isAnimating() && currentStep() >= 2">
         <div class="node-content">
-          <span class="node-name">Main Content</span>
-          <span class="node-status">Default - Always Checked</span>
+          <span class="node-name">user-section</span>
+          <span class="node-status">Always Checked</span>
         </div>
       </div>
-      <div
-        class="component-node onpush-node"
-        [class.active]="currentStep() >= 2"
-        [class.checking]="isAnimating() && currentStep() >= 4"
-      >
+    </div>
+
+    <div class="connection-lines">
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+    </div>
+
+    <div class="tree-level">
+      <div class="component-node" [class.active]="currentStep() >= 3" [class.checking]="isAnimating() && currentStep() >= 3">
         <div class="node-content">
-          <span class="node-name">Footer (OnPush)</span>
-          <span class="node-status">Checked - Input Changed</span>
+          <span class="node-name">info-sub-section1</span>
+          <span class="node-status">Always Checked</span>
         </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 3" [class.checking]="isAnimating() && currentStep() >= 3">
+        <div class="node-content">
+          <span class="node-name">info-sub-section2</span>
+          <span class="node-status">Always Checked</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 3" [class.checking]="isAnimating() && currentStep() >= 3">
+        <div class="node-content">
+          <span class="node-name">user-sub-section1</span>
+          <span class="node-status">Always Checked</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 3" [class.checking]="isAnimating() && currentStep() >= 3">
+        <div class="node-content">
+          <span class="node-name">user-sub-section2</span>
+          <span class="node-status">Always Checked</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connection-lines">
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+    </div>
+
+    <div class="tree-level">
+      <div class="component-node" [class.active]="currentStep() >= 4" [class.checking]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Always Checked</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 4" [class.checking]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Always Checked</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 4" [class.checking]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Always Checked</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 4" [class.checking]="isAnimating() && currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Always Checked</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- OnPush Visual Summary (With Stars) -->
+  @if (diagramType() === 'onpush-visual-summary') {
+  <div class="component-tree onpush-summary">
+    <div class="tree-level">
+      <div class="component-node root-node" [class.active]="currentStep() >= 1">
+        <div class="node-content">
+          <span class="node-name">app-component</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connection-lines">
+      <div class="line" [class.active]="currentStep() >= 2"></div>
+      <div class="line" [class.active]="currentStep() >= 2"></div>
+    </div>
+
+    <div class="tree-level">
+      <div class="component-node" [class.active]="currentStep() >= 2">
+        <div class="node-content">
+          <span class="node-name">info-section</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 2">
+        <div class="node-content">
+          <span class="node-name">user-section</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connection-lines">
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+      <div class="line" [class.active]="currentStep() >= 3"></div>
+    </div>
+
+    <div class="tree-level">
+      <div class="component-node" [class.active]="currentStep() >= 3">
+        <div class="node-content">
+          <span class="node-name">info-sub-section1</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+      <div class="component-node onpush-node" [class.active]="currentStep() >= 3">
+        <div class="node-content">
+          <span class="node-name">info-sub-section2 ⭐</span>
+          <span class="node-status">OnPush Strategy</span>
+        </div>
+      </div>
+      <div class="component-node onpush-node" [class.active]="currentStep() >= 3">
+        <div class="node-content">
+          <span class="node-name">user-sub-section1 ⭐</span>
+          <span class="node-status">OnPush Strategy</span>
+        </div>
+      </div>
+      <div class="component-node onpush-node" [class.active]="currentStep() >= 3">
+        <div class="node-content">
+          <span class="node-name">user-sub-section2 ⭐</span>
+          <span class="node-status">OnPush Strategy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connection-lines">
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+      <div class="line" [class.active]="currentStep() >= 4"></div>
+    </div>
+
+    <div class="tree-level">
+      <div class="component-node" [class.active]="currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+      <div class="component-node" [class.active]="currentStep() >= 4">
+        <div class="node-content">
+          <span class="node-name">display-number</span>
+          <span class="node-status">Default Strategy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend-panel">
+      <div class="legend-item">
+        <div class="legend-box default"></div>
+        <span>Default Strategy - Always Checked</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box onpush"></div>
+        <span>⭐ OnPush Strategy - Checked Selectively</span>
       </div>
     </div>
   </div>
@@ -895,7 +1175,7 @@
     <div class="zone-container">
       <div class="ngzone-circle" [class.active]="currentStep() >= 1">
         <div class="zone-label">NgZone</div>
-        
+
         <div class="root-component" [class.active]="currentStep() >= 2">
           <div class="component-icon">🏠</div>
           <span>Root</span>
@@ -931,7 +1211,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="zone-usage-examples">
       <div class="example-card outer">
         <h5>Outer Zone Usage</h5>
@@ -1326,7 +1606,7 @@
         <div class="branch-container" [class.active]="currentStep() >= 2">
           <div class="branch-label">Creation Mode</div>
           <div class="branch-label">Update Mode</div>
-          
+
           <div class="branch-left">
             <div class="step-box small">
               <span>componentFactory.create()</span>
@@ -1499,12 +1779,210 @@
   </div>
   }
 
+  <!-- OnPush Visual Summary with Stars -->
+  @if (diagramType() === 'onpush-visual-summary') {
+  <div class="onpush-visual-summary">
+    <div class="component-tree onpush-visual-tree">
+      <div class="tree-level">
+        <div class="component-node root-node" [class.active]="currentStep() >= 1">
+          <div class="node-content">
+            <span class="node-name">app-component</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="connection-lines">
+        <div class="line" [class.active]="currentStep() >= 2"></div>
+        <div class="line" [class.active]="currentStep() >= 2"></div>
+      </div>
+
+      <div class="tree-level">
+        <div class="component-node" [class.active]="currentStep() >= 2">
+          <div class="node-content">
+            <span class="node-name">info-section</span>
+          </div>
+        </div>
+        <div class="component-node" [class.active]="currentStep() >= 2">
+          <div class="node-content">
+            <span class="node-name">user-section</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="connection-lines">
+        <div class="line" [class.active]="currentStep() >= 3"></div>
+        <div class="line" [class.active]="currentStep() >= 3"></div>
+        <div class="line" [class.active]="currentStep() >= 3"></div>
+        <div class="line" [class.active]="currentStep() >= 3"></div>
+      </div>
+
+      <div class="tree-level">
+        <div class="component-node" [class.active]="currentStep() >= 3">
+          <div class="node-content">
+            <span class="node-name">info-sub-section1</span>
+          </div>
+        </div>
+        <div class="component-node onpush-star" [class.active]="currentStep() >= 3">
+          <div class="node-content">
+            <span class="node-name">info-sub-section2</span>
+            <span class="star">⭐</span>
+          </div>
+        </div>
+        <div class="component-node onpush-star" [class.active]="currentStep() >= 3">
+          <div class="node-content">
+            <span class="node-name">user-sub-section1</span>
+            <span class="star">⭐</span>
+          </div>
+        </div>
+        <div class="component-node onpush-star" [class.active]="currentStep() >= 3">
+          <div class="node-content">
+            <span class="node-name">user-sub-section2</span>
+            <span class="star">⭐</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="connection-lines">
+        <div class="line" [class.active]="currentStep() >= 4"></div>
+      </div>
+
+      <div class="tree-level">
+        <div class="component-node small-node" [class.active]="currentStep() >= 4">
+          <div class="node-content">
+            <span class="node-name">display-number</span>
+          </div>
+        </div>
+        <div class="component-node small-node" [class.active]="currentStep() >= 4">
+          <div class="node-content">
+            <span class="node-name">display-number</span>
+          </div>
+        </div>
+        <div class="component-node small-node highlighted-node" [class.active]="currentStep() >= 4">
+          <div class="node-content">
+            <span class="node-name">display-number</span>
+          </div>
+        </div>
+        <div class="component-node small-node" [class.active]="currentStep() >= 4">
+          <div class="node-content">
+            <span class="node-name">display-number</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="visual-legend" [class.active]="currentStep() >= 4">
+      <div class="legend-item">
+        <span class="legend-star">⭐</span>
+        <span>Component with OnPush</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box highlighted"></div>
+        <span>Updated due to OnPush trigger</span>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Traditional Component Tree Diagram -->
+  @if (diagramType() === 'traditional-component-tree') {
+  <div class="traditional-component-tree">
+    <div class="component-tree traditional-tree">
+      <div class="tree-level">
+        <div
+          class="component-node root-node"
+          [class.active]="currentStep() >= 1"
+          [class.checking]="isAnimating() && currentStep() >= 1"
+        >
+          <div class="node-content">
+            <span class="node-name">app-component</span>
+            <span class="node-status">Root</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="connection-lines">
+        <div class="line" [class.active]="currentStep() >= 2"></div>
+        <div class="line" [class.active]="currentStep() >= 2"></div>
+        <div class="line" [class.active]="currentStep() >= 2"></div>
+      </div>
+
+      <div class="tree-level">
+        <div
+          class="component-node"
+          [class.active]="currentStep() >= 2"
+          [class.checking]="isAnimating() && currentStep() >= 2"
+        >
+          <div class="node-content">
+            <span class="node-name">Header</span>
+            <span class="node-status">Always Checked</span>
+          </div>
+        </div>
+        <div
+          class="component-node"
+          [class.active]="currentStep() >= 2"
+          [class.checking]="isAnimating() && currentStep() >= 2"
+        >
+          <div class="node-content">
+            <span class="node-name">Main Content</span>
+            <span class="node-status">Always Checked</span>
+          </div>
+        </div>
+        <div
+          class="component-node"
+          [class.active]="currentStep() >= 2"
+          [class.checking]="isAnimating() && currentStep() >= 2"
+        >
+          <div class="node-content">
+            <span class="node-name">Footer</span>
+            <span class="node-status">Always Checked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="connection-lines">
+        <div class="line" [class.active]="currentStep() >= 3"></div>
+        <div class="line" [class.active]="currentStep() >= 3"></div>
+      </div>
+
+      <div class="tree-level">
+        <div
+          class="component-node"
+          [class.active]="currentStep() >= 3"
+          [class.checking]="isAnimating() && currentStep() >= 3"
+        >
+          <div class="node-content">
+            <span class="node-name">User Card</span>
+            <span class="node-status">Always Checked</span>
+          </div>
+        </div>
+        <div
+          class="component-node"
+          [class.active]="currentStep() >= 3"
+          [class.checking]="isAnimating() && currentStep() >= 3"
+        >
+          <div class="node-content">
+            <span class="node-name">Product List</span>
+            <span class="node-status">Always Checked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box" [class.active]="currentStep() >= 4">
+        <p>
+          ⚠️ In default strategy, Angular checks EVERY component on every change detection cycle,
+          even if only one component changed.
+        </p>
+      </div>
+    </div>
+  </div>
+  }
+
   <!-- NgZone Component Tree Diagram -->
   @if (diagramType() === 'ngzone-component-tree') {
   <div class="ngzone-component-tree">
     <div class="ngzone-circle-wrapper" [class.active]="currentStep() >= 1">
       <div class="ngzone-label">NgZone</div>
-      
+
       <div class="tree-structure-inside">
         <div class="tree-node root" [class.active]="currentStep() >= 2">
           <span>Root</span>
@@ -1563,10 +2041,4 @@
   </div>
   }
 
-  <!-- Animation Controls -->
-  @if (animated()) {
-  <div class="animation-controls">
-    <button class="control-btn" (click)="startAnimation()">🔄 Replay Animation</button>
-  </div>
-  }
 </div>

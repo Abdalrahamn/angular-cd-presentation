@@ -1,4 +1,4 @@
-import { Component, input, computed, signal, effect } from '@angular/core';
+import { Component, input, computed, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export type DiagramType =
@@ -8,6 +8,8 @@ export type DiagramType =
   | 'performance-comparison'
   | 'strategy-comparison'
   | 'onpush-tree'
+  | 'onpush-visual-summary'
+  | 'traditional-component-tree'
   | 'targeted-change-detection'
   | 'dirty-marking-flow'
   | 'zoneless-architecture'
@@ -37,7 +39,7 @@ export type DiagramType =
   templateUrl: './change-detection-diagram.html',
   styleUrl: './change-detection-diagram.scss',
 })
-export class ChangeDetectionDiagramComponent {
+export class ChangeDetectionDiagramComponent implements OnDestroy {
   diagramType = input.required<DiagramType>();
   title = input<string>('');
   animated = input<boolean>(true);
@@ -45,6 +47,8 @@ export class ChangeDetectionDiagramComponent {
   // Animation state
   isAnimating = signal(false);
   currentStep = signal(0);
+  animationInterval: any = null;
+  hasStarted = signal(false);
 
   // Performance data for charts
   performanceData = computed(() => [
@@ -55,28 +59,45 @@ export class ChangeDetectionDiagramComponent {
   ]);
 
   constructor() {
-    effect(() => {
+    // Auto-start animation when component loads
+    setTimeout(() => {
       if (this.animated()) {
-        this.startAnimation();
+        this.startContinuousAnimation();
       }
-    });
+    }, 500);
   }
 
-  startAnimation() {
+  startContinuousAnimation() {
+    if (this.animationInterval) {
+      clearInterval(this.animationInterval);
+    }
+
     this.isAnimating.set(true);
+    this.hasStarted.set(true);
     this.currentStep.set(0);
 
-    const interval = setInterval(() => {
+    this.animationInterval = setInterval(() => {
       this.currentStep.update((step) => {
         const nextStep = step + 1;
         if (nextStep > this.getMaxSteps()) {
-          clearInterval(interval);
-          this.isAnimating.set(false);
+          // Reset to 0 and continue looping
           return 0;
         }
         return nextStep;
       });
     }, 1500);
+  }
+
+  stopAnimation() {
+    if (this.animationInterval) {
+      clearInterval(this.animationInterval);
+      this.animationInterval = null;
+    }
+    this.isAnimating.set(false);
+  }
+
+  ngOnDestroy() {
+    this.stopAnimation();
   }
 
   private getMaxSteps(): number {
@@ -130,6 +151,10 @@ export class ChangeDetectionDiagramComponent {
         return 3; // Angular Will -> wrapListener -> markViewDirty
       case 'ngzone-component-tree':
         return 4; // NgZone -> Root -> Component tree with states
+      case 'onpush-visual-summary':
+        return 4;
+      case 'traditional-component-tree':
+        return 4;
       default:
         return 0;
     }

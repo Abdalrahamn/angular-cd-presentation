@@ -25,20 +25,6 @@ export const justAngularEnhancedSlides: SlideData[] = [
             'Angular 2+:<br>• Zone.js monkey patching<br>• Component tree traversal<br>• Predictable performance<br>• Unidirectional data flow<br>• Automatic cleanup and optimization',
         },
       },
-      {
-        type: 'timeline',
-        content: 'Angular Evolution Timeline:',
-        subItems: [
-          '2010-2016: AngularJS - Digest cycle era',
-          '2016: Angular 2 - Zone.js revolution',
-          '2017: Angular 4 - OnPush strategy',
-          '2020: Angular 9 - Ivy renderer',
-          '2022: Angular 14 - Signals preview',
-          '2023: Angular 16-17 - Stable Signals',
-          '2024: Angular 18-19 - Zoneless experimental',
-          '2025: Angular 20 - Zoneless STABLE! 🎉',
-        ],
-      },
     ],
     diagram: {
       type: 'angularjs-to-angular-evolution',

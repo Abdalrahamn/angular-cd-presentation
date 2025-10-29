@@ -23,7 +23,8 @@ export interface SlideContent {
     | 'success-metrics'
     | 'migration-timeline'
     | 'call-to-action'
-    | 'table';
+    | 'table'
+    | 'image';
   content: string;
   subItems?: string[];
   comparison?: {
@@ -34,6 +35,8 @@ export interface SlideContent {
     headers: string[];
     rows: string[][];
   };
+  imageUrl?: string;
+  imageAlt?: string;
 }
 
 export interface CodeExample {
@@ -69,6 +72,8 @@ export interface DiagramConfig {
     | 'performance-comparison'
     | 'strategy-comparison'
     | 'onpush-tree'
+    | 'onpush-visual-summary'
+    | 'traditional-component-tree'
     | 'targeted-change-detection'
     | 'dirty-marking-flow'
     | 'zoneless-architecture'

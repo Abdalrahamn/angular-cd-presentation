@@ -116,37 +116,6 @@ export class CounterComponent {
     },
   },
   {
-    id: 'zoneless-markviewdirty',
-    title: 'Updated markViewDirty for Zoneless',
-    subtitle: 'Notifying the Scheduler',
-    content: [
-      {
-        type: 'text',
-        content:
-          'In the experimental zoneless implementation, markViewDirty now notifies the changeDetectionScheduler that something changed.',
-      },
-    ],
-    codeExample: {
-      language: 'typescript',
-      title: 'Updated markViewDirty',
-      code: `export function markViewDirty(lView: LView): LView|null {
-  lView[ENVIRONMENT].changeDetectionScheduler?.notify();
-  // ... rest of the existing code
-  while (lView) {
-    lView[FLAGS] |= LViewFlags.Dirty;
-    const parent = getLViewParent(lView);
-    if (isRootView(lView) && !viewAttachedToChangeDetector(lView)) {
-      break;
-    }
-    lView = parent;
-  }
-  return lView;
-}`,
-      explanation:
-        'Now when a component is marked dirty, it immediately notifies the scheduler to queue a change detection run.',
-    },
-  },
-  {
     id: 'zoneless-onpush-compatibility',
     title: 'OnPush Components Work Great in Zoneless',
     subtitle: 'Already Optimized for Explicit Change Detection',
@@ -204,47 +173,17 @@ export class CounterComponent {
         content:
           'Removing Zone.js provides significant performance benefits that are measurable in real-world applications.',
       },
+      {
+        type: 'comparison',
+        content: 'Performance Comparison: Zone.js vs Zoneless',
+        comparison: {
+          before:
+            'With Zone.js:\n• Bundle Size: 245KB\n• Startup Time: 850ms\n• Memory Usage: 12.5MB\n• Monkey patching overhead\n• Complex stack traces',
+          after:
+            'Zoneless Angular:\n• Bundle Size: 200KB (45KB savings - 18%)\n• Startup Time: 720ms (130ms faster - 15%)\n• Memory Usage: 10.8MB (1.7MB less - 14%)\n• No monkey patching\n• Clean stack traces',
+        },
+      },
     ],
-    codeExample: {
-      language: 'typescript',
-      title: 'Performance Comparison Component',
-      code: `@Component({
-  template: \`
-    <div class="performance-metrics">
-      <div class="metric">
-        <h3>Bundle Size</h3>
-        <p class="before">With Zone.js: 245KB</p>
-        <p class="after">Zoneless: 200KB</p>
-        <p class="improvement">Savings: 45KB (18%)</p>
-      </div>
-      
-      <div class="metric">
-        <h3>Startup Time</h3>
-        <p class="before">With Zone.js: 850ms</p>
-        <p class="after">Zoneless: 720ms</p>
-        <p class="improvement">Improvement: 130ms (15%)</p>
-      </div>
-      
-      <div class="metric">
-        <h3>Memory Usage</h3>
-        <p class="before">With Zone.js: 12.5MB</p>
-        <p class="after">Zoneless: 10.8MB</p>
-        <p class="improvement">Reduction: 1.7MB (14%)</p>
-      </div>
-    </div>
-  \`
-})
-export class PerformanceMetricsComponent {
-  // Real performance data from zoneless experiments
-}`,
-      explanation:
-        'These are real performance improvements measured in experimental zoneless Angular applications.',
-    },
-    diagram: {
-      type: 'zoneless-architecture',
-      title: 'Zoneless vs Zone.js Architecture',
-      animated: false,
-    },
   },
   {
     id: 'signals-change-detection-future',
@@ -288,6 +227,18 @@ export class PerformanceMetricsComponent {
         type: 'highlight',
         content: '🛠️ Angular 19+ includes built-in migration schematics!',
       },
+      {
+        type: 'bullet',
+        content: 'Automated Migration Process:',
+        subItems: [
+          '1. Update Angular CLI and Core packages',
+          '2. Run signal migration schematics',
+          '3. Convert @Input, @Output, and queries to signals',
+          '4. Remove Zone.js from polyfills.ts',
+          '5. Enable zoneless change detection',
+          '6. Test and validate the migration',
+        ],
+      },
     ],
     codeExample: {
       language: 'bash',
@@ -303,13 +254,10 @@ ng generate @angular/core:signal-input-migration
 ng generate @angular/core:output-migration  
 ng generate @angular/core:signal-queries-migration
 
-# Enable zoneless change detection
-# Add to main.ts:
-import { provideZonelessChangeDetection } from '@angular/core';
+# Remove Zone.js from polyfills.ts
+# Delete or comment out: import 'zone.js/dist/zone';
 
-bootstrapApplication(AppComponent, {
-  providers: [provideZonelessChangeDetection()]
-});`,
+# Enable zoneless change detection (see previous slide for setup)`,
       explanation:
         'These commands automatically convert @Input, @Output, and queries to use Signals, making your app zoneless-ready with minimal manual changes.',
     },
@@ -374,40 +322,172 @@ bootstrapApplication(AppComponent, {
     },
   },
   {
-    id: 'zoneless-conclusion',
-    title: 'Zoneless Angular: The Path Forward',
-    subtitle: 'Better Performance, Better Developer Experience',
+    id: 'practical-example',
+    title: 'Practical Example: HTTP Client with OnPush',
+    subtitle: 'Real-World Implementation',
     content: [
       {
         type: 'text',
         content:
-          "Zoneless Angular represents the culmination of years of evolution in Angular's change detection system. It combines the best of all approaches: the reliability of Zone.js, the performance of OnPush, and the precision of signals.",
-      },
-      {
-        type: 'bullet',
-        content: 'The complete evolution:',
-        subItems: [
-          'Zone.js: Automatic but inefficient',
-          'OnPush: Manual but optimized',
-          'Signals: Automatic and optimized',
-          'Zoneless: Predictable and performant',
-          'Signal Components: The perfect combination',
-        ],
+          "Here's a practical example showing how to implement an Angular component that fetches user data using HttpClient with OnPush change detection strategy.",
       },
       {
         type: 'highlight',
-        content: '🚀 The future of Angular is zoneless, signal-driven, and incredibly efficient!',
+        content: '🔧 This pattern works perfectly in both Zone.js and Zoneless environments!',
+      },
+    ],
+    codeExample: {
+      language: 'typescript',
+      title: 'User List Component with OnPush',
+      code: `@Component({
+  selector: 'app-root',
+  template: \`
+    <h1>Users</h1>
+    <ul>
+      @for (user of users; track user.id) {
+        <li>{{ user.name }}</li>
+      }
+    </ul>
+  \`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AppComponent {
+  private http = inject(HttpClient);
+  users: User[] = [];
+
+  ngOnInit() {
+    this.getUsers();
+  }
+
+  getUsers() {
+    this.http
+      .get<User[]>('https://jsonplaceholder.typicode.com/users')
+      .subscribe((users) => {
+        this.users = users;
+      });
+  }
+}`,
+      explanation:
+        'This component demonstrates OnPush change detection with HTTP requests. In a zoneless environment, you would need to call markForCheck() after setting the users array, or better yet, use signals for automatic reactivity.',
+    },
+  },
+  {
+    id: 'practical-example-zoneless',
+    title: 'Same Example: Zoneless with Signals',
+    subtitle: 'Modern Angular Approach',
+    content: [
+      {
+        type: 'text',
+        content:
+          "Here's how the same component would look in a zoneless Angular application using signals for automatic reactivity.",
       },
       {
-        type: 'call-to-action',
-        content: '🎯 Ready to start your zoneless journey?',
+        type: 'highlight',
+        content: '⚡ No manual change detection needed - signals handle everything!',
+      },
+    ],
+    codeExample: {
+      language: 'typescript',
+      title: 'Zoneless User List Component',
+      code: `@Component({
+  selector: 'app-zoneless-user-list',
+  template: \`
+    <div class="user-list-container">
+      <h2>Users (Zoneless with Signals)</h2>
+      <div class="loading" *ngIf="loading()">Loading users...</div>
+      <ul class="user-list" *ngIf="!loading()">
+        @for (user of users(); track user.id) {
+          <li class="user-item">
+            <strong>{{ user.name }}</strong>
+            <span>@{{ user.username }}</span>
+            <div>{{ user.email }}</div>
+          </li>
+        }
+      </ul>
+    </div>
+  \`,
+  // No changeDetection strategy needed in zoneless!
+})
+export class ZonelessUserListComponent {
+  private http = inject(HttpClient);
+  users = signal<User[]>([]);
+  loading = signal(true);
+
+  ngOnInit() {
+    this.getUsers();
+  }
+
+  getUsers() {
+    this.http
+      .get<User[]>('https://jsonplaceholder.typicode.com/users')
+      .subscribe((users) => {
+        this.users.set(users); // Automatically triggers UI update!
+        this.loading.set(false);
+      });
+  }
+}`,
+      explanation:
+        'In the zoneless version, signals automatically notify Angular when they change, eliminating the need for manual change detection calls.',
+    },
+  },
+  {
+    id: 'live-demo-result',
+    title: 'Live Demo: See It In Action! 🚀',
+    subtitle: 'Working Components Side by Side',
+    content: [
+      {
+        type: 'text',
+        content:
+          "Here's the actual working result of both approaches - you can see how they both fetch and display user data, but with different change detection strategies.",
+      },
+      {
+        type: 'highlight',
+        content:
+          '👀 Notice: Both components work, but the zoneless version is more reactive and efficient!',
+      },
+      {
+        type: 'code-demo',
+        content:
+          '🎯 Interactive Demo: Both components are now available in the codebase at /src/app/components/',
+      },
+      {
+        type: 'bullet',
+        content: 'Key observations from the demo:',
         subItems: [
-          'Start new projects with Angular 20+ and zoneless',
-          'Migrate existing apps using ng generate @angular/core:signals',
-          'Adopt OnPush strategy as a stepping stone',
-          'Use Signals for all new reactive state',
-          'Test zoneless mode in development environments',
+          'Both components fetch the same data from JSONPlaceholder API',
+          'OnPush version uses traditional properties and change detection',
+          'Zoneless version uses signals for automatic reactivity',
+          'The UI updates happen automatically in both cases',
+          'Zoneless approach requires less boilerplate code',
+          'Signals provide better type safety and reactivity',
         ],
+      },
+    ],
+  },
+  {
+    id: 'angular-memes-finale',
+    title: 'The End: Angular Change Detection Memes! 😂',
+    subtitle: 'Because Every Good Presentation Needs Memes',
+    content: [
+      {
+        type: 'highlight',
+        content: '🎉 Congratulations! You survived the Angular Change Detection journey!',
+      },
+      {
+        type: 'image',
+        content: 'When you migrate from Zone.js to Zoneless',
+        imageUrl: 'https://i.imgflip.com/2/30b1gx.jpg',
+        imageAlt: 'This is fine dog meme - Migrating to zoneless',
+      },
+      {
+        type: 'text',
+        content:
+          '🚀 From AngularJS digest cycles to Zoneless Signals - what a journey! Thanks for joining me on this epic adventure through the evolution of Angular change detection.',
+      },
+      {
+        type: 'highlight',
+        content:
+          '💡 Remember: With great power comes great responsibility... to optimize your change detection! 😄',
       },
     ],
   },

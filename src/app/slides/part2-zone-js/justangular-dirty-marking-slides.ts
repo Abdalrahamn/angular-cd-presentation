@@ -28,16 +28,6 @@ export const justAngularDirtyMarkingSlides: SlideData[] = [
           'A direct call to ChangeDetectorRef.markForCheck()',
         ],
       },
-      {
-        type: 'bullet',
-        content: 'Key insights from Angular internals:',
-        subItems: [
-          'Only dirty components and their children are checked',
-          'Dirty marking propagates up the component tree',
-          'Zone.js automatically marks components dirty on async operations',
-          'OnPush components skip checking unless explicitly marked dirty',
-        ],
-      },
     ],
     codeExample: {
       language: 'typescript',
@@ -66,8 +56,8 @@ export class OnPushComponent {
   @Input() user!: User;
   
   // Only triggers if user reference changes
-  // user = { ...user, name: 'New Name' }; ✅ Works
-  // user.name = 'New Name'; ❌ Won't trigger
+  // user = { ...user, name: 'New Name' }; Works
+  // user.name = 'New Name'; Won't trigger
 }
 
 // 3. Async pipe marks components dirty
@@ -91,7 +81,7 @@ export class ManualComponent {
   }
 }`,
       explanation:
-        'Angular uses multiple strategies to detect when components need to be checked. Understanding these patterns is crucial for building efficient applications.',
+        'Angular uses multiple strategies to detect when components need to be checked.',
     },
   },
   {

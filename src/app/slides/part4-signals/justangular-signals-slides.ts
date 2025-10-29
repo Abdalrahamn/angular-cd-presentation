@@ -30,14 +30,11 @@ export const justAngularSignalsSlides: SlideData[] = [
       },
       {
         type: 'success-metrics',
-        content: '📊 Real-world performance gains (2024-2025):',
+        content: '📊 Real-world adoption (2024-2025):',
         subItems: [
           'YouTube: 40% faster rendering with Signals',
-          'Google Search: Wiz-Angular hybrid performance',
+          'Google Search: Wiz-Angular hybrid approach',
           'Enterprise apps: 60% fewer change detection cycles',
-          'Bundle size: 45KB reduction (18% smaller)',
-          'Startup time: 130ms improvement (15% faster)',
-          'Memory usage: 1.7MB reduction (14% less)',
         ],
       },
     ],
@@ -99,47 +96,6 @@ export class SignalsComponent {
       explanation:
         'Signals provide fine-grained reactivity - only the specific DOM nodes that depend on changed signals are updated, not the entire component tree.',
     },
-  },
-  {
-    id: 'signals-basic-example',
-    title: 'Signals Basic Example',
-    subtitle: 'Creating and Using Signals',
-    codeExample: {
-      language: 'typescript',
-      title: 'Basic Signal Usage',
-      code: `import { Component, signal, computed } from '@angular/core';
-
-@Component({
-  template: \`
-    <div>
-      <p>Count: {{ count() }}</p>
-      <p>Double: {{ doubleCount() }}</p>
-      <button (click)="increment()">Increment</button>
-    </div>
-  \`
-})
-export class CounterComponent {
-  // Create a signal
-  count = signal(0);
-  
-  // Create a computed signal that automatically updates
-  doubleCount = computed(() => this.count() * 2);
-  
-  increment() {
-    // Update the signal
-    this.count.update(value => value + 1);
-  }
-}`,
-      explanation:
-        'Signals are reactive primitives that automatically track dependencies and update consumers when they change.',
-    },
-    content: [
-      {
-        type: 'text',
-        content:
-          'When count() changes, only the DOM nodes that depend on count or doubleCount are updated - not the entire component!',
-      },
-    ],
   },
   {
     id: 'targeted-change-detection',
@@ -215,23 +171,44 @@ export function markViewForRefresh(lView: LView) {
   {
     id: 'targeted-mode-flow',
     title: 'Targeted Mode Change Detection Flow',
-    subtitle: 'Step-by-Step Process',
+    subtitle: 'Complete Flow Summary',
     content: [
       {
-        type: 'bullet',
-        content: 'The targeted change detection process:',
-        subItems: [
-          '1. Start with root component (CheckAlways) - check & refresh normally',
-          '2. Continue with CheckAlways components - refresh as usual',
-          '3. Hit OnPush + HAS_CHILD_VIEWS_TO_REFRESH but not dirty → Switch to TargetedMode',
-          '4. In TargetedMode: Skip CheckAlways components without RefreshView',
-          '5. Find RefreshView component → Refresh it and switch to GlobalMode',
-          '6. Continue in GlobalMode for children',
-        ],
+        type: 'text',
+        content: '💡 Full Flow Summary: How Angular intelligently switches between Global and Targeted modes for optimal performance.',
+      },
+      {
+        type: 'table',
+        content: 'Change Detection Flow Table',
+        tableData: {
+          headers: ['Stage', 'Mode', 'Action'],
+          rows: [
+            ['1️⃣ Root (CheckAlways)', 'Global', '✅ Regular check'],
+            ['2️⃣ CheckAlways components', 'Global', '✅ Checked normally'],
+            ['3️⃣ OnPush + HAS_CHILD_VIEWS_TO_REFRESH (Not Dirty)', '🔁 Switch to Targeted', '🎯 Start of targeted mode'],
+            ['4️⃣ In Targeted Mode', 'Targeted', '⏭️ Skip CheckAlways without running RefreshView'],
+            ['5️⃣ RefreshView component', 'Targeted → Global', '🎯 Actually updates, then returns to Global mode'],
+            ['6️⃣ Children after update', 'Global', '✅ Checked normally']
+          ]
+        }
       },
       {
         type: 'highlight',
-        content: '🎯 Targeted Change Detection = OnPush without footguns!',
+        content: '🎯 Summary: Targeted Change Detection = OnPush without issues or footguns',
+      },
+      {
+        type: 'bullet',
+        content: 'Key Benefits:',
+        subItems: [
+          'Angular can now update only specific parts of the component tree',
+          'You no longer need to use markForCheck() or detectChanges() manually',
+          'Everything updates automatically when a Signal changes',
+          'Performance is significantly higher because checks are smart and localized',
+        ],
+      },
+      {
+        type: 'text',
+        content: '⚙️ Simple analogy: Imagine you have a big building 🏢. In Global Mode: the cleaner walks through every room to check and clean. In Targeted Mode: the cleaner knows exactly which room got dirty, so he just goes there, cleans it, and gets back to work 💪',
       },
     ],
     diagram: {
@@ -275,56 +252,29 @@ export function markViewForRefresh(lView: LView) {
     ],
     codeExample: {
       language: 'typescript',
-      title: 'Complex Dependency Example',
+      title: 'Simple Dependency Tracking',
       code: `@Component({
   template: \`
-    <div>
-      <h2>User Profile</h2>
-      <p>Name: {{ fullName() }}</p>
-      <p>Status: {{ userStatus() }}</p>
-      <p>Badge: {{ badge() }}</p>
-      
-      <input [value]="firstName()" (input)="updateFirstName($event)">
-      <input [value]="lastName()" (input)="updateLastName($event)">
-      <button (click)="toggleActive()">Toggle Active</button>
-    </div>
+    <p>First: {{ firstName() }}</p>
+    <p>Last: {{ lastName() }}</p>
+    <p>Full Name: {{ fullName() }}</p>
+    <button (click)="updateFirst()">Update First</button>
   \`
 })
-export class UserProfileComponent {
+export class DependencyExample {
   firstName = signal('John');
   lastName = signal('Doe');
-  isActive = signal(true);
   
-  // Computed signals automatically track dependencies
+  // Automatically tracks firstName() and lastName()
   fullName = computed(() => \`\${this.firstName()} \${this.lastName()}\`);
   
-  userStatus = computed(() => this.isActive() ? 'Active' : 'Inactive');
-  
-  badge = computed(() => {
-    const status = this.userStatus();
-    const name = this.fullName();
-    return \`\${name} - \${status}\`;
-  });
-  
-  updateFirstName(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.firstName.set(target.value);
-    // Only DOM nodes depending on firstName, fullName, and badge update!
-  }
-  
-  updateLastName(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.lastName.set(target.value);
-    // Only DOM nodes depending on lastName, fullName, and badge update!
-  }
-  
-  toggleActive() {
-    this.isActive.update(active => !active);
-    // Only DOM nodes depending on isActive, userStatus, and badge update!
+  updateFirst() {
+    this.firstName.set('Jane');
+    // Only fullName() recalculates automatically!
   }
 }`,
       explanation:
-        'Signals automatically track which computed values depend on which source signals. When firstName changes, only fullName and badge are recalculated and their DOM nodes updated.',
+        'Signals automatically track dependencies. When firstName changes, only fullName recalculates - no manual dependency management needed!',
     },
     diagram: {
       type: 'signal-dependency-graph',
@@ -466,97 +416,6 @@ export class ThemeComponent {
 }`,
       explanation:
         'Effects automatically run when any signal they read changes. Perfect for side effects like updating localStorage, making API calls, or updating global state.',
-    },
-  },
-  {
-    id: 'signals-vs-traditional-comparison',
-    title: 'Signals vs Traditional Approach',
-    subtitle: 'Side-by-Side Comparison',
-    content: [
-      {
-        type: 'text',
-        content:
-          "Let's see how signals simplify reactive programming compared to traditional OnPush + Zone.js approach.",
-      },
-    ],
-    codeExample: {
-      language: 'typescript',
-      title: 'Traditional vs Signals Approach',
-      code: `// ❌ Traditional approach with Zone.js + OnPush
-@Component({
-  selector: 'app-traditional',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: \`
-    <div>
-      <h2>{{ user.name }}</h2>
-      <p>Posts: {{ user.posts.length }}</p>
-      <p>Status: {{ userStatus }}</p>
-      <p>Last update: {{ lastUpdate | date:'medium' }}</p>
-    </div>
-  \`
-})
-export class TraditionalComponent implements OnChanges {
-  @Input() user!: User;
-  
-  userStatus = '';
-  lastUpdate = new Date();
-  
-  constructor(private cdr: ChangeDetectorRef) {}
-  
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['user']) {
-      // Manual computation on input change
-      this.userStatus = this.user.isActive ? 'Active' : 'Inactive';
-      this.lastUpdate = new Date();
-      
-      // Manual change detection trigger
-      this.cdr.markForCheck();
-    }
-  }
-  
-  updateUser(updates: Partial<User>) {
-    // Must create new reference for OnPush
-    this.user = { ...this.user, ...updates };
-    this.userStatus = this.user.isActive ? 'Active' : 'Inactive';
-    this.lastUpdate = new Date();
-  }
-}
-
-// ✅ Modern approach with Signals
-@Component({
-  selector: 'app-signals',
-  template: \`
-    <div>
-      <h2>{{ user().name }}</h2>
-      <p>Posts: {{ user().posts.length }}</p>
-      <p>Status: {{ userStatus() }}</p>
-      <p>Last update: {{ lastUpdate() | date:'medium' }}</p>
-    </div>
-  \`
-})
-export class SignalsComponent {
-  // Signal input - automatically reactive
-  user = input.required<User>();
-  
-  // Computed signals - automatically update when dependencies change
-  userStatus = computed(() => 
-    this.user().isActive ? 'Active' : 'Inactive'
-  );
-  
-  lastUpdate = computed(() => {
-    // Depends on user signal - updates automatically
-    this.user(); // Read to create dependency
-    return new Date();
-  });
-  
-  updateUser(updates: Partial<User>) {
-    // Direct signal update - automatically triggers reactivity
-    this.user.update(current => ({ ...current, ...updates }));
-    // userStatus and lastUpdate automatically recalculate!
-  }
-}`,
-      explanation:
-        'Signals eliminate the need for manual change detection triggers, lifecycle hooks for reactive computations, and careful immutability management. Everything becomes automatically reactive.',
     },
   },
 ];

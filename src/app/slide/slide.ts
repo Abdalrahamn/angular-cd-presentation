@@ -18,6 +18,7 @@ import {
   ZoneBeforeAfterDemoComponent,
   AsyncPipeDemoComponent,
 } from '../shared/components/live-demos';
+import { UserComparisonDemoComponent } from '../components/user-comparison-demo.component';
 
 @Component({
   selector: 'app-slide',
@@ -39,6 +40,7 @@ import {
     PerformanceDemoComponent,
     ZoneBeforeAfterDemoComponent,
     AsyncPipeDemoComponent,
+    UserComparisonDemoComponent,
   ],
   templateUrl: './slide.html',
   styleUrl: './slide.scss',

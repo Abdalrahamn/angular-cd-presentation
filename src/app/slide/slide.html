@@ -81,6 +81,17 @@
         </div>
         }
 
+        <!-- Image Content -->
+        @if (content.type === 'image') {
+        <div class="content-image">
+          @if (content.content) {
+          <h3>{{ content.content }}</h3>
+          }
+          <img [src]="content.imageUrl" [alt]="content.imageAlt || content.content" />
+        </div>
+        }
+
+
         <!-- Change Detection Diagram -->
         @if (content.type === 'code-demo') { @switch (slideData().id) { @case ('default-strategy') {
         <app-change-detection-diagram
@@ -124,6 +135,8 @@
           [animated]="true"
         >
         </app-change-detection-diagram>
+        } @case ('live-demo-result') {
+        <app-user-comparison-demo></app-user-comparison-demo>
         } @default {
         <div class="generic-diagram">
           <h3>{{ content.content }}</h3>

@@ -1,9 +1,7 @@
 import { PresentationData, SlideData } from '../models/slide.interface';
 
-// Keep only OnPush from original slides (most comprehensive)
+// Optimized imports - removed redundant slide collections
 import { part3OnPushSlides } from '../slides/part3-onpush/part3-slides';
-
-// JustAngular enhanced content (more detailed and technical)
 import { justAngularEnhancedSlides } from '../slides/part1-default-strategy/justangular-enhanced-slides';
 import { angularJSDigestSlides } from '../slides/part0-angularjs/angularjs-digest-slides';
 import { justAngularDirtyMarkingSlides } from '../slides/part2-zone-js/justangular-dirty-marking-slides';
@@ -29,11 +27,11 @@ const introSlide: SlideData = {
       type: 'bullet',
       content: 'Complete Change Detection Evolution:',
       subItems: [
-        '🏛️ AngularJS (2010-2016) - Digest cycle foundation',
-        '⚡ Angular 2+ (2016) - Zone.js revolution',
-        '🔄 OnPush Strategy (2016-present) - Performance optimization',
-        '📡 Signals (Angular 16-17, 2023-2024) - Reactive primitives',
-        '🚀 Zoneless (Angular 18,19,20+, 2024-present) - The future is here!',
+        '🏛️ AngularJS - Digest cycle foundation',
+        '⚡ Angular 2+ - Zone.js revolution',
+        '🔄 OnPush Strategy - Performance optimization',
+        '📡 Signals - Reactive primitives',
+        '🚀 Zoneless - The future is here!',
       ],
     },
     {
@@ -50,6 +48,12 @@ const introSlide: SlideData = {
     {
       type: 'highlight',
       content: "🎉 Ready to master Angular change detection? Let's dive in!",
+    },
+    {
+      type: 'image',
+      content: '',
+      imageUrl: 'https://media.giphy.com/media/BpGWitbFZflfSUYuZ9/giphy.gif',
+      imageAlt: 'Excited developer ready to learn',
     },
   ],
 };
